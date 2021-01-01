@@ -4,7 +4,7 @@ import axios from "axios";
 export function get(path = '') {
   return axios.get(path).catch(err => {
     console.log(err);
-    throw new Error('Http Get a Error : api.service');
+    throw new Error('Http Get Error : api.service');
   })
 }
 
