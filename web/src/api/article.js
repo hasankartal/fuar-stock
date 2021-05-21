@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import id from "element-ui/src/locale/lang/id";
 
 export function fetchList(query) {
   return request({
@@ -28,6 +29,23 @@ export function createArticle(data) {
   return request({
     url: '/vue-element-admin/article/create',
     method: 'post',
+    data
+  })
+}
+
+export function createSale(data) {
+  request({
+    url: 'http://localhost:8011/sale/new',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteSale(data) {
+//  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
+  request({
+    url: 'http://localhost:8011/sale/delete',
+    method: 'delete',
     data
   })
 }
