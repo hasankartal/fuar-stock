@@ -31,10 +31,10 @@ const tableRouter = {
       meta: { title: 'it' }
     },
     {
-      path: 'complex-table',
+      path: 'sale-table',
       component: () => import('@/views/table/complex-table'),
-      name: 'ComplexTable',
-      meta: { title: 'Complex Table' }
+      name: 'SaleTable',
+      meta: { title: 'Satış Tablosu' }
     }
   ]
 }
