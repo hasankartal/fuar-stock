@@ -9,9 +9,7 @@ import java.util.Date;
 @Builder
 public class TokenRequest {
 
-    @Id
     private Long id;
-
     private Boolean isActive;
     private String token;
 
