@@ -227,7 +227,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      get('http://localhost:8011/sale').then(response => {
+      get('http://localhost:8011/sale?token=token').then(response => {
         this.total = 3
         this.list = response.data.map(v => {
           v.id = v.id
