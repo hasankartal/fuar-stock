@@ -31,46 +31,17 @@ public class SaleApi {
 
     @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
-        public Mono saveSale(@RequestBody SaleSaveRequest item) {
-      /*  SaleResponse saleResponse =  saleService.save(
-                SaleSaveRequest.builder()
-                        .id(new Long(20))
-                        .amount(258.50F)
-                        .moneyType(MoneyType.TL.toString())
-                        .orderDate(new Date())
-                        .build());
-*//*saleService.save(
-                SaleSaveRequest.builder()
-                        .id(24L)
-                        .amount(221.50F)
-                        .moneyType(MoneyType.TL.toString())
-                        .orderDate(new Date())
-                        .build());*/
+    public Mono saveSale(@RequestBody SaleSaveRequest item) {
         Sale sale = Sale.builder()
-                .id(item.getId())
                 .amount(item.getAmount())
                 .money(item.getMoneyType())
                 .orderDate(new Date())
                 .build();
         saleService.saveMono(item)
                 .subscribe(result -> logger.info("Entity has been saved: {}", result));
-        //Mono<SaleEs> saleEsMono =;
         saleEsService.saveNewSale(sale)
                 .subscribe(result -> logger.info("Entity has been saved: {}", result));
-
-        //Mono<Void> all = Mono.when(monoSale, saleEsMono);
-        //all.subscribeOn(Schedulers.fromExecutor(exec));
-
         return null;
-        /*
-       saleService.saveMono(
-                SaleSaveRequest.builder()
-                      //  .id(30L)
-                        .amount(item.getAmount())
-                        .moneyType(MoneyType.TL.toString())
-                        .orderDate(new Date())
-                        .build());
-      *///  return null;
     }
 
     @DeleteMapping("/delete")

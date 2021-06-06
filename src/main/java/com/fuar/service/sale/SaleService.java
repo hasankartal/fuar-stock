@@ -6,6 +6,7 @@ import com.fuar.model.sale.SaleResponse;
 import com.fuar.model.sale.SaleSaveRequest;
 import com.fuar.repository.sale.SaleRepository;
 import com.fuar.service.sale.es.SaleEsService;
+import com.fuar.service.sequence.SequenceGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -20,6 +21,7 @@ import java.util.Locale;
 public class SaleService {
     private final SaleRepository saleRepository;
     private final SaleEsService saleEsService;
+    private final SequenceGeneratorService sequenceGeneratorService;
 
     public Flux<SaleResponse> getAll() {
         return saleEsService.findAll().map(this::mapToDto);
@@ -42,7 +44,7 @@ public class SaleService {
 
     public Mono saveMono(SaleSaveRequest request) {
         Sale sale = Sale.builder()
-                .id(request.getId())
+                .id(sequenceGeneratorService.generateSequence(Sale.SEQUENCE_NAME))
                 .amount(request.getAmount())
                 .money(request.getMoneyType())
                 .orderDate(new Date())
@@ -56,14 +58,13 @@ public class SaleService {
 
     public SaleResponse save(SaleSaveRequest request) {
         Sale sale = Sale.builder()
-                .id(request.getId())
+              //  .id(request.getId())
                 .amount(request.getAmount())
                 .money(request.getMoneyType())
                 .orderDate(request.getOrderDate())
                 .build();
         saleRepository.save(sale);
 
-        // 3 - Redisten güncelle
         return null;
         //return this.mapToDto(saleEsService.saveNewSale(sale).publishOn(Schedulers.elastic()).block());
     }
@@ -72,7 +73,7 @@ public class SaleService {
     public void delete(Long id) {
         Mono<Sale> sale = saleRepository.findById(id);
         if(sale != null) {
-            Mono<Void> saleDelete = saleRepository.delete(Sale.builder().id(id).build());
+            //Mono<Void> saleDelete = saleRepository.delete(Sale.builder().id(id).build());
             saleEsService.delete(id);
 
         }

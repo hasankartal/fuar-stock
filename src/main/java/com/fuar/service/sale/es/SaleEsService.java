@@ -6,6 +6,7 @@ import com.fuar.repository.sale.es.SaleEsRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,7 +23,7 @@ public class SaleEsService {
     public Mono<SaleEs> saveNewSale(Sale sale) {
         Mono<SaleEs> ps = saleEsRepository.save(
                 SaleEs.builder()
-                        .id(sale.getId())
+             //           .id(sale.getId())
                         .amount(sale.getAmount())
                         .money(sale.getMoney())
                         .orderDate(new Date())
@@ -31,11 +32,15 @@ public class SaleEsService {
     }
 
     public Flux<SaleEs> findAll() {
-        return saleEsRepository.findAll();
+        return saleEsRepository.findAll(sortByOrderDateDesc());
     }
 
     public void delete(Long id) {
         Mono<SaleEs> saleEs = saleEsRepository.findById(id);
         saleEsRepository.deleteById(id);
+    }
+
+    private Sort sortByOrderDateDesc() {
+        return Sort.by(Sort.Direction.DESC, "orderDate");
     }
 }
