@@ -23,7 +23,7 @@ public class SaleEsService {
     public Mono<SaleEs> saveNewSale(Sale sale) {
         Mono<SaleEs> ps = saleEsRepository.save(
                 SaleEs.builder()
-             //           .id(sale.getId())
+                        .id(sale.getId())
                         .amount(sale.getAmount())
                         .money(sale.getMoney())
                         .orderDate(new Date())

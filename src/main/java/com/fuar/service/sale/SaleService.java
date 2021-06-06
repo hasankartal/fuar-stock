@@ -50,10 +50,9 @@ public class SaleService {
                 .orderDate(new Date())
                 .build();
         Mono<Sale> monoSale = saleRepository.save(sale);
-        //Mono<SaleEs> saleEsMono = saleEsService.saveNewSale(sale);
+        Mono<SaleEs> saleEsMono = saleEsService.saveNewSale(sale);
 
-        return monoSale;
-        //return null;
+        return saleEsMono;
     }
 
     public SaleResponse save(SaleSaveRequest request) {
@@ -69,13 +68,11 @@ public class SaleService {
         //return this.mapToDto(saleEsService.saveNewSale(sale).publishOn(Schedulers.elastic()).block());
     }
 
-
     public void delete(Long id) {
         Mono<Sale> sale = saleRepository.findById(id);
         if(sale != null) {
-            //Mono<Void> saleDelete = saleRepository.delete(Sale.builder().id(id).build());
+            Mono<Void> saleDelete = saleRepository.delete(Sale.builder().id(id).build());
             saleEsService.delete(id);
-
         }
     }
 }

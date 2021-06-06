@@ -39,8 +39,7 @@ public class SaleApi {
                 .build();
         saleService.saveMono(item)
                 .subscribe(result -> logger.info("Entity has been saved: {}", result));
-        saleEsService.saveNewSale(sale)
-                .subscribe(result -> logger.info("Entity has been saved: {}", result));
+//        saleEsService.saveNewSale(sale).subscribe(result -> logger.info("Entity has been saved: {}", result));
         return null;
     }
 
