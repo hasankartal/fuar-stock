@@ -14,7 +14,7 @@ import java.util.Date;
 public class Sale extends EntityBase {
 
     @Transient
-    public static final String SEQUENCE_NAME = "users_sequence";
+    public static final String SEQUENCE_NAME = "sale_seq";
 
     private Float amount;
     private String money;

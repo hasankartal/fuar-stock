@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class UserResponse {
+public class UserResponseDto {
 
     private String token;
     private Boolean isActive;

@@ -1,6 +1,6 @@
 package com.fuar.config.log;
 
-import com.fuar.model.log.LogRestIncomingRequest;
+import com.fuar.model.log.LogRestIncomingDto;
 import com.fuar.service.log.LogRestIncomingService;
 import com.fuar.util.Utils;
 import org.apache.logging.log4j.ThreadContext;
@@ -33,7 +33,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         try {
-            LogRestIncomingRequest restIncomingRequest = new LogRestIncomingRequest();
+            LogRestIncomingDto restIncomingRequest = new LogRestIncomingDto();
             String bound = "incoming message";
             restIncomingRequest.setId(new Random().nextLong());
 

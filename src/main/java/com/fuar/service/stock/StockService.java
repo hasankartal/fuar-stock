@@ -2,8 +2,8 @@ package com.fuar.service.stock;
 
 import com.fuar.domain.stock.Stock;
 import com.fuar.domain.stock.es.StockEs;
-import com.fuar.model.stock.StockResponse;
-import com.fuar.model.stock.StockSaveRequest;
+import com.fuar.model.stock.StockResponseDto;
+import com.fuar.model.stock.StockSaveRequestDto;
 import com.fuar.repository.stock.StockRepository;
 import com.fuar.service.stock.es.StockEsService;
 import lombok.RequiredArgsConstructor;
@@ -16,20 +16,20 @@ public class StockService {
     private final StockRepository stockRepository;
     private final StockEsService stockEsService;
 
-    public Flux<StockResponse> getAll() {
+    public Flux<StockResponseDto> getAll() {
         return stockEsService.findAll().map(this::mapToDto);
     }
 
-    private StockResponse mapToDto(StockEs item) {
+    private StockResponseDto mapToDto(StockEs item) {
         if (item == null) {
             return null;
         }
-        return StockResponse.builder()
+        return StockResponseDto.builder()
                 .id(item.getId())
                 .build();
     }
 
-    public StockResponse save(StockSaveRequest request) {
+    public StockResponseDto save(StockSaveRequestDto request) {
         Stock stock = Stock.builder()
                 .id(request.getId())
                 .build();

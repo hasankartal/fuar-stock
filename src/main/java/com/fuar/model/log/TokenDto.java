@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 @Builder
-public class TokenRequest {
+public class TokenDto {
 
     private Long id;
     private Boolean isActive;

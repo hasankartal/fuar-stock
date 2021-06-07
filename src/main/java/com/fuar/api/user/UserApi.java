@@ -1,14 +1,9 @@
 package com.fuar.api.user;
 
 import com.fuar.api.sale.SaleApi;
-import com.fuar.domain.sale.Sale;
 import com.fuar.domain.user.User;
-import com.fuar.model.sale.SaleResponse;
-import com.fuar.model.sale.SaleSaveRequest;
-import com.fuar.model.user.UserRequest;
-import com.fuar.model.user.UserResponse;
-import com.fuar.service.sale.SaleService;
-import com.fuar.service.sale.es.SaleEsService;
+import com.fuar.model.user.UserRequestDto;
+import com.fuar.model.user.UserResponseDto;
 import com.fuar.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -29,13 +24,13 @@ public class UserApi {
     private final UserService userService;
 
     @GetMapping
-    public Flux<UserResponse> getAllSales() {
+    public Flux<UserResponseDto> getAllSales() {
         return userService.getAll();
     }
 
     @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono saveSale(@RequestBody UserRequest item) {
+    public Mono saveSale(@RequestBody UserRequestDto item) {
         User user = User.builder()
                 .id(new Random().nextLong())
                 .userName(item.getUserName())

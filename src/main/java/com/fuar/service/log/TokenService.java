@@ -1,10 +1,7 @@
 package com.fuar.service.log;
 
-import com.fuar.domain.log.LogRestIncoming;
 import com.fuar.domain.log.Token;
-import com.fuar.model.log.LogRestIncomingRequest;
-import com.fuar.model.log.TokenRequest;
-import com.fuar.repository.log.LogRestIncomingRepository;
+import com.fuar.model.log.TokenDto;
 import com.fuar.repository.log.token.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +16,7 @@ public class TokenService {
         return true;
     }
 
-    public Mono<Token> save(TokenRequest request) {
+    public Mono<Token> save(TokenDto request) {
         return repository.save(Token
                 .builder()
                 .id(request.getId())

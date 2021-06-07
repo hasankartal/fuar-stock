@@ -1,10 +1,12 @@
 package com.fuar.api.sale;
 
 import com.fuar.domain.sale.Sale;
-import com.fuar.model.sale.SaleResponse;
-import com.fuar.model.sale.SaleSaveRequest;
+import com.fuar.model.sale.SaleResponseDto;
+import com.fuar.model.sale.SaleSaveRequestDto;
 import com.fuar.service.sale.es.SaleEsService;
 import com.fuar.service.sale.SaleService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +21,22 @@ import java.util.Date;
 @RequestMapping("/sale")
 @RequiredArgsConstructor
 @CrossOrigin("*")
+@Api(value="All details about the sale api.")
 public class SaleApi {
     Logger logger = LoggerFactory.getLogger(SaleApi.class);
     private final SaleService saleService;
     private final SaleEsService saleEsService;
 
     @GetMapping
-    public Flux<SaleResponse> getAllSales() {
+    @ApiOperation(value = "Retrieve all sales")
+    public Flux<SaleResponseDto> getAllSales() {
         return saleService.getAll();
     }
 
     @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono saveSale(@RequestBody SaleSaveRequest item) {
+    @ApiOperation(value = "Post new sale")
+    public Mono saveSale(@RequestBody SaleSaveRequestDto item) {
         Sale sale = Sale.builder()
                 .amount(item.getAmount())
                 .money(item.getMoneyType())
@@ -44,8 +49,9 @@ public class SaleApi {
     }
 
     @DeleteMapping("/delete")
-//    @ResponseStatus(HttpStatus.CREATED)
-    public void deleteSale(@RequestBody SaleSaveRequest item) {
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Delete sale")
+    public void deleteSale(@RequestBody SaleSaveRequestDto item) {
         saleService.delete(item.getId());
     }
 

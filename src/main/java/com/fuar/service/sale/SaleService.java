@@ -2,8 +2,8 @@ package com.fuar.service.sale;
 
 import com.fuar.domain.sale.Sale;
 import com.fuar.domain.sale.es.SaleEs;
-import com.fuar.model.sale.SaleResponse;
-import com.fuar.model.sale.SaleSaveRequest;
+import com.fuar.model.sale.SaleResponseDto;
+import com.fuar.model.sale.SaleSaveRequestDto;
 import com.fuar.repository.sale.SaleRepository;
 import com.fuar.service.sale.es.SaleEsService;
 import com.fuar.service.sequence.SequenceGeneratorService;
@@ -23,18 +23,18 @@ public class SaleService {
     private final SaleEsService saleEsService;
     private final SequenceGeneratorService sequenceGeneratorService;
 
-    public Flux<SaleResponse> getAll() {
+    public Flux<SaleResponseDto> getAll() {
         return saleEsService.findAll().map(this::mapToDto);
     }
 
-    private SaleResponse mapToDto(SaleEs item) {
+    private SaleResponseDto mapToDto(SaleEs item) {
         if (item == null) {
             return null;
         }
         Locale locale = new Locale("tr", "TR");
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
         String date = dateFormat.format(item.getOrderDate());
-        return SaleResponse.builder()
+        return SaleResponseDto.builder()
                 .id(item.getId())
                 .amount(item.getAmount())
                 .moneyType(item.getMoney())
@@ -42,7 +42,7 @@ public class SaleService {
                 .build();
     }
 
-    public Mono saveMono(SaleSaveRequest request) {
+    public Mono saveMono(SaleSaveRequestDto request) {
         Sale sale = Sale.builder()
                 .id(sequenceGeneratorService.generateSequence(Sale.SEQUENCE_NAME))
                 .amount(request.getAmount())
@@ -55,7 +55,7 @@ public class SaleService {
         return saleEsMono;
     }
 
-    public SaleResponse save(SaleSaveRequest request) {
+    public SaleResponseDto save(SaleSaveRequestDto request) {
         Sale sale = Sale.builder()
               //  .id(request.getId())
                 .amount(request.getAmount())

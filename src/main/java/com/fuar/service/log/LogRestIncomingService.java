@@ -1,10 +1,9 @@
 package com.fuar.service.log;
 
 import com.fuar.domain.log.LogRestIncoming;
-import com.fuar.model.log.LogRestIncomingRequest;
+import com.fuar.model.log.LogRestIncomingDto;
 import com.fuar.repository.log.LogRestIncomingRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -13,7 +12,7 @@ import reactor.core.publisher.Mono;
 public class LogRestIncomingService {
     private final LogRestIncomingRepository repository;
 
-    public Mono<LogRestIncoming> save(LogRestIncomingRequest request) {
+    public Mono<LogRestIncoming> save(LogRestIncomingDto request) {
         return  repository.save(LogRestIncoming.
                 builder()
                 .id(request.getId())

@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import java.util.Date;
 
 @Data
-public class LogRestIncomingRequest {
+public class LogRestIncomingDto {
 
     private Long id;
     private String endpointUrl;
