@@ -33,9 +33,35 @@ export function createArticle(data) {
   })
 }
 
+export function getSale() {
+  request({
+    url: 'http://localhost:8011/sale?token=token',
+    method: 'get'
+  })
+}
+
+export function fetchSaleList() {
+ /* get('http://localhost:8011/sale?token=token').then(response => {
+    //this.total = 3
+    this.list = response.data.map(v => {
+    v.id = v.id
+    v.amount = v.amount
+    return v
+  })
+  setTimeout(() => {
+    this.listLoading = false
+    }, 1.5 * 1000)
+  }) */
+  return request({
+    url: 'http://localhost:8011/sale?token=token',
+    method: 'get'
+  })
+
+}
+
 export function createSale(data) {
   request({
-    url: 'http://localhost:8011/sale/new',
+    url: 'http://localhost:8011/sale/new?token=token',
     method: 'post',
     data
   })
@@ -44,11 +70,20 @@ export function createSale(data) {
 export function deleteSale(data) {
 //  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
   request({
-    url: 'http://localhost:8011/sale/delete',
+    url: 'http://localhost:8011/sale/delete?token=token',
     method: 'delete',
     data
   })
 }
+
+export function getExcelSale(data) {
+  //  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
+  return request({
+      url: 'http://localhost:8011/sale/excelSale?token=token',
+      method: 'post',
+      data
+    })
+  }
 
 export function updateArticle(data) {
   return request({

@@ -59,19 +59,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Actions" align="center" width="300" class-name="small-padding fixed-width">
+      <el-table-column label="Aksiyonlar" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
-          </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            Publish
-          </el-button>
-          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
-            Draft
+            Güncelle
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-            Delete
+            Sil
           </el-button>
         </template>
       </el-table-column>
@@ -81,30 +75,16 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Type" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+        <el-form-item label="Para Birimi" prop="moneyType">
+          <el-select v-model="temp.moneyType" class="filter-item" placeholder="Please select">
             <el-option v-for="item in moneyTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
         <el-form-item label="Date" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item>
-        <el-form-item label="Para Birimi" prop="moneyType">
-          <el-input v-model="temp.moneyType" />
-        </el-form-item>
         <el-form-item label="Tutar" prop="amount">
           <el-input v-model="temp.amount" />
-        </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Imp">
-          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
-        </el-form-item>
-        <el-form-item label="Remark">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -133,7 +113,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, createSale, deleteSale, updateArticle } from '@/api/article'
+import { fetchList, fetchPv, createArticle,fetchSaleList, createSale, deleteSale, getExcelSale, updateArticle } from '@/api/article'
 import {get} from "@/api/inline-edit";
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -227,8 +207,22 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
+      fetchSaleList().then(response => {
+        console.log(response)
+        this.list = response.map(v => {
+            v.id = v.id
+            return v
+        })
+      })
+      this.listLoading = false
+    },
+      
+    /*
+    getList() {
+      this.listLoading = true
+      fetchSaleList();
       get('http://localhost:8011/sale?token=token').then(response => {
-        this.total = 3
+        //this.total = 3
         this.list = response.data.map(v => {
           v.id = v.id
           v.amount = v.amount
@@ -239,17 +233,10 @@ export default {
         }, 1.5 * 1000)
 
       })
-    },
+    },*/
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
-    },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.status = status
     },
     sortChange(data) {
       const { prop, order } = data
@@ -290,7 +277,7 @@ export default {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.amount = this.amount
           createSale(this.temp)
-            /*.then(() => {
+            .then(() => {
             //this.list.unshift(this.temp)
             //this.dialogFormVisible = false
             this.$notify({
@@ -299,7 +286,7 @@ export default {
               type: 'success',
               duration: 2000
             })
-          })*/
+          })
         }
       })
     },
@@ -350,6 +337,38 @@ export default {
     },
     handleDownload() {
       this.downloadLoading = true
+      getExcelSale()
+      .then((res) => {
+        let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
+        console.log(res)
+                 //Compatible with IE10
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(blob,'Sale Excel');
+        }else{
+          /*
+          const link = document.createElement('a')
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download ='Sale Excel' //downloaded file name
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)*/
+           const url = URL.createObjectURL(new Blob([res.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute(
+          'download',
+          `Sale-${new Date().toLocaleDateString()}.xlsx`
+          )
+          document.body.appendChild(link)
+          link.click()
+        }
+        }).catch(error => {
+            console.log(error)
+        })
+
+      this.downloadLoading = false
+      /*this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
         const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
@@ -361,7 +380,11 @@ export default {
         })
         this.downloadLoading = false
       })
+      */
+
+
     },
+
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
         if (j === 'timestamp') {

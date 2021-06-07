@@ -2,16 +2,24 @@ package com.fuar.service.sale.es;
 
 import com.fuar.domain.sale.Sale;
 import com.fuar.domain.sale.es.SaleEs;
+import com.fuar.model.sale.SaleResponseDto;
 import com.fuar.repository.sale.es.SaleEsRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.*;
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +28,24 @@ public class SaleEsService {
 
     private final SaleEsRepository saleEsRepository;
 
+    public Flux<SaleResponseDto> getAll() {
+        return saleEsRepository.findAll().map(this::mapToDto);
+    }
+
+    private SaleResponseDto mapToDto(SaleEs item) {
+        if (item == null) {
+            return null;
+        }
+        Locale locale = new Locale("tr", "TR");
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+        String date = dateFormat.format(item.getOrderDate());
+        return SaleResponseDto.builder()
+                .id(item.getId())
+                .amount(item.getAmount())
+                .moneyType(item.getMoney())
+                .orderDate(date)
+                .build();
+    }
     public Mono<SaleEs> saveNewSale(Sale sale) {
         Mono<SaleEs> ps = saleEsRepository.save(
                 SaleEs.builder()
@@ -38,6 +64,74 @@ public class SaleEsService {
     public void delete(Long id) {
         Mono<SaleEs> saleEs = saleEsRepository.findById(id);
         saleEsRepository.deleteById(id);
+    }
+
+    public ByteArrayResource excelSale() {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        arrangeHeader(sheet);
+
+        Flux<SaleResponseDto> saleResponseDtoFlux = getAll();
+        List<SaleResponseDto> saleResponseDtoList = saleResponseDtoFlux.collectList().block();
+        int numberOfRow = 1;
+        for (SaleResponseDto saleResponseDto: saleResponseDtoList ) {
+            createNewRow(sheet, saleResponseDto, numberOfRow);
+            numberOfRow++;
+        }
+
+        ByteArrayOutputStream resource = new ByteArrayOutputStream();
+
+        try {
+            workbook.write(resource);
+        } catch (IOException io) {
+            return null;
+        }
+        ByteArrayResource response = new ByteArrayResource(resource.toByteArray());
+        return response;
+    }
+
+    private Row arrangeHeader(Sheet sheet) {
+        int headerCellNumber = 0;
+        Row header = sheet.createRow(0);
+
+        Cell id = header.createCell(headerCellNumber);
+        id.setCellValue("Id");
+        headerCellNumber++;
+
+        Cell amount = header.createCell(headerCellNumber);
+        amount.setCellValue("Tutar");
+        headerCellNumber++;
+
+        Cell currencyType = header.createCell(headerCellNumber);
+        currencyType.setCellValue("Para Birimi");
+        headerCellNumber++;
+
+        Cell date = header.createCell(headerCellNumber);
+        date.setCellValue("Tarih");
+        headerCellNumber++;
+
+        return header;
+    }
+
+    private void createNewRow(Sheet sheet, SaleResponseDto saleResponseDto, int numberOfRow) {
+        Row row = sheet.createRow(numberOfRow);
+        int numberOfColumn = 0;
+        Cell idCell = row.createCell(numberOfColumn);
+        idCell.setCellValue(saleResponseDto.getId());
+        numberOfColumn++;
+
+        Cell amountCell = row.createCell(numberOfColumn);
+        amountCell.setCellValue(saleResponseDto.getAmount() != null ? saleResponseDto.getAmount().toString() : "");
+        numberOfColumn++;
+
+        Cell moneyTypeCell = row.createCell(numberOfColumn);
+        moneyTypeCell.setCellValue(saleResponseDto.getMoneyType());
+        numberOfColumn++;
+
+        Cell orderDateCell = row.createCell(numberOfColumn);
+        orderDateCell.setCellValue(saleResponseDto.getOrderDate());
+        numberOfColumn++;
     }
 
     private Sort sortByOrderDateDesc() {

@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -55,4 +56,11 @@ public class SaleApi {
         saleService.delete(item.getId());
     }
 
+    @PostMapping("/excelSale")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get sale excel")
+    public Object excelSale() {
+        ByteArrayResource resource = saleEsService.excelSale();
+        return resource;
+    }
 }
