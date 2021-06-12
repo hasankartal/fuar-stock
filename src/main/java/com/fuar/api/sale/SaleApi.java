@@ -1,6 +1,5 @@
 package com.fuar.api.sale;
 
-import com.fuar.domain.sale.Sale;
 import com.fuar.model.sale.SaleResponseDto;
 import com.fuar.model.sale.SaleSaveRequestDto;
 import com.fuar.service.sale.es.SaleEsService;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Date;
-
 @RestController
 @RequestMapping("/sale")
 @RequiredArgsConstructor
@@ -33,21 +30,25 @@ public class SaleApi {
     @GetMapping
     @ApiOperation(value = "Retrieve all sales")
     public Flux<SaleResponseDto> getAllSales() {
-        return saleService.getAll();
+        return saleEsService.getAllSales();
     }
 
-    @PostMapping("/new")
+    @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Post new sale")
     public Mono saveSale(@RequestBody SaleSaveRequestDto item) {
-        Sale sale = Sale.builder()
-                .amount(item.getAmount())
-                .money(item.getMoneyType())
-                .orderDate(new Date())
-                .build();
         saleService.saveMono(item)
-                .subscribe(result -> logger.info("Entity has been saved: {}", result));
+                .subscribe(result -> logger.info("Entity has been saved to mongo db : {}", result));
 //        saleEsService.saveNewSale(sale).subscribe(result -> logger.info("Entity has been saved: {}", result));
+        return null;
+    }
+
+    @PostMapping("/update")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Post new sale")
+    public Mono updateSale(@RequestBody SaleSaveRequestDto item) {
+        saleService.updateMono(item)
+                .subscribe(result -> logger.info("Entity has been updated to mongo db : {}", result));
         return null;
     }
 
@@ -76,9 +77,7 @@ public class SaleApi {
     public Object excelSales() {
         ByteArrayResource resource = saleEsService.excelSale();
 
-//        return ResponseEntity.ok().contentType(MediaType.parseMediaType(MediaType.MULTIPART_FORM_DATA_VALUE))
         return ResponseEntity.ok().contentType(new MediaType("application", "vnd.ms-excel"))
                 .body(resource);
-        //return resource;
     }
 }

@@ -61,7 +61,7 @@ export function fetchSaleList() {
 
 export function createSale(data) {
   request({
-    url: 'http://localhost:8011/sale/new?token=token',
+    url: 'http://localhost:8011/sale/add?token=token',
     method: 'post',
     data
   })
@@ -86,9 +86,9 @@ export function getExcelSale(data) {
     })
   }
 
-export function updateArticle(data) {
-  return request({
-    url: '/vue-element-admin/article/update',
+export function updateSale(data) {
+  request({
+    url: 'http://localhost:8011/sale/update?token=token',
     method: 'post',
     data
   })

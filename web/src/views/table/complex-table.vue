@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle,fetchSaleList, createSale, deleteSale, getExcelSale, updateArticle, getExcelSales } from '@/api/article'
+import { fetchList, fetchPv, createArticle,fetchSaleList, createSale, deleteSale, getExcelSale, updateSale, getExcelSales } from '@/api/article'
 import {get} from "@/api/inline-edit";
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -274,8 +274,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.amount = this.amount
+          //this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           createSale(this.temp)
             .then(() => {
             //this.list.unshift(this.temp)
@@ -304,10 +303,10 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
+          updateSale(tempData).then(() => {
+//            const index = this.list.findIndex(v => v.id === this.temp.id)
+ //           this.list.splice(index, 1, this.temp)
+  //          this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
               message: 'Update Successfully',

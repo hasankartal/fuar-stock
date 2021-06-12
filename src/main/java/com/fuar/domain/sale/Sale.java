@@ -21,8 +21,8 @@ public class Sale extends EntityBase {
     private Date orderDate;
 
     @Builder
-    public Sale(long id, Float amount, String money, Date orderDate) {
-        super(id, new Date(), "CREATED", new Date());
+    public Sale(long id, Float amount, String money, Date orderDate, String operation) {
+        super(id, new Date(), operation, new Date());
         this.amount = amount;
         this.money = money;
         this.orderDate = orderDate;

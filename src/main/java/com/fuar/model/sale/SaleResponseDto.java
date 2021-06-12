@@ -25,5 +25,5 @@ public class SaleResponseDto {
     private String moneyType;
 
     @ApiModelProperty(notes="Date is invoice date")
-    private String orderDate;
+    private Date orderDate;
 }

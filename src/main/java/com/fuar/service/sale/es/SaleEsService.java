@@ -28,24 +28,30 @@ public class SaleEsService {
 
     private final SaleEsRepository saleEsRepository;
 
-    public Flux<SaleResponseDto> getAll() {
-        return saleEsRepository.findAll().map(this::mapToDto);
+    public Flux<SaleResponseDto> getAllSales() {
+        return findAll().map(this::mapToDto);
+    }
+
+    public Flux<SaleEs> findAll() {
+        return saleEsRepository.findAll(sortByOrderDateDesc());
     }
 
     private SaleResponseDto mapToDto(SaleEs item) {
         if (item == null) {
             return null;
         }
-        Locale locale = new Locale("tr", "TR");
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
-        String date = dateFormat.format(item.getOrderDate());
+//        Locale locale = new Locale("tr", "TR");
+//        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+//        String date = dateFormat.format(item.getOrderDate());
+       // String date = item.getOrderDate().toLocaleString();
         return SaleResponseDto.builder()
                 .id(item.getId())
                 .amount(item.getAmount())
                 .moneyType(item.getMoney())
-                .orderDate(date)
+                .orderDate(item.getOrderDate())
                 .build();
     }
+
     public Mono<SaleEs> saveNewSale(Sale sale) {
         Mono<SaleEs> ps = saleEsRepository.save(
                 SaleEs.builder()
@@ -57,13 +63,19 @@ public class SaleEsService {
         return ps;
     }
 
-    public Flux<SaleEs> findAll() {
-        return saleEsRepository.findAll(sortByOrderDateDesc());
-    }
+    public Mono<SaleEs> updateSale(Sale sale) {
+        SaleEs saleEs = saleEsRepository.findById(sale.getId()).block();
 
+        saleEs.setId(sale.getId());
+        saleEs.setAmount(sale.getAmount());
+        saleEs.setMoney(sale.getMoney());
+        saleEs.setOrderDate(sale.getOrderDate());
+
+        Mono<SaleEs> ps = saleEsRepository.save(saleEs);
+        return ps;
+    }
     public void delete(Long id) {
-        Mono<SaleEs> saleEs = saleEsRepository.findById(id);
-        saleEsRepository.deleteById(id);
+        saleEsRepository.deleteById(id).subscribe(result -> logger.info("Entity has been deleted from elastic search: {}", result));
     }
 
     public ByteArrayResource excelSale() {
@@ -72,7 +84,7 @@ public class SaleEsService {
 
         arrangeHeader(sheet);
 
-        Flux<SaleResponseDto> saleResponseDtoFlux = getAll();
+        Flux<SaleResponseDto> saleResponseDtoFlux = getAllSales();
         List<SaleResponseDto> saleResponseDtoList = saleResponseDtoFlux.collectList().block();
         int numberOfRow = 1;
         for (SaleResponseDto saleResponseDto: saleResponseDtoList ) {
