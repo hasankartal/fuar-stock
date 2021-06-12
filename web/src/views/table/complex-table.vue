@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle,fetchSaleList, createSale, deleteSale, getExcelSale, updateArticle } from '@/api/article'
+import { fetchList, fetchPv, createArticle,fetchSaleList, createSale, deleteSale, getExcelSale, updateArticle, getExcelSales } from '@/api/article'
 import {get} from "@/api/inline-edit";
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -338,10 +338,10 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       getExcelSale()
+
       .then((res) => {
-        let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
-        console.log(res)
-                 //Compatible with IE10
+      //  let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
+      //  console.log(res)
         if (window.navigator && window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveOrOpenBlob(blob,'Sale Excel');
         }else{
@@ -352,16 +352,24 @@ export default {
           link.download ='Sale Excel' //downloaded file name
           document.body.appendChild(link)
           link.click()
-          document.body.removeChild(link)*/
-           const url = URL.createObjectURL(new Blob([res.data]))
-          const link = document.createElement('a')
-          link.href = url
-          link.setAttribute(
-          'download',
-          `Sale-${new Date().toLocaleDateString()}.xlsx`
-          )
-          document.body.appendChild(link)
-          link.click()
+          document.body.removeChild(link)
+          console.log(res)
+          */
+        
+          let blob = new Blob([res], {
+            type: 'application/vnd.ms-excel'
+          }); // 2. Get the blob setting file type in the response object returned by the request. Here is excel as an example.
+          
+          let url = URL.createObjectURL(blob); // 3. Create a temporary url pointing to the blob object
+          console.log(url)
+          // 4. After creating the url, you can simulate a series of operations on this file object, for example: preview, download
+          let a = document.createElement("a");
+          a.href = url;
+          //a.href = "http://localhost:8011/sale/excelSales?token=token";
+          a.download = "Export";
+          a.click();
+          // 5. Release this temporary object url
+          window.URL.revokeObjectURL(url);
         }
         }).catch(error => {
             console.log(error)

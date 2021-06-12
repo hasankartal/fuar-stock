@@ -81,6 +81,7 @@ export function getExcelSale(data) {
   return request({
       url: 'http://localhost:8011/sale/excelSale?token=token',
       method: 'post',
+      responseType: 'blob',
       data
     })
   }

@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -61,6 +63,22 @@ public class SaleApi {
     @ApiOperation(value = "Get sale excel")
     public Object excelSale() {
         ByteArrayResource resource = saleEsService.excelSale();
-        return resource;
+
+//        return ResponseEntity.ok().contentType(MediaType.parseMediaType(MediaType.MULTIPART_FORM_DATA_VALUE))
+        return ResponseEntity.ok().contentType(new MediaType("application", "vnd.ms-excel"))
+            .body(resource);
+        //return resource;
+    }
+
+    @GetMapping("/excelSales")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get sale excel")
+    public Object excelSales() {
+        ByteArrayResource resource = saleEsService.excelSale();
+
+//        return ResponseEntity.ok().contentType(MediaType.parseMediaType(MediaType.MULTIPART_FORM_DATA_VALUE))
+        return ResponseEntity.ok().contentType(new MediaType("application", "vnd.ms-excel"))
+                .body(resource);
+        //return resource;
     }
 }
