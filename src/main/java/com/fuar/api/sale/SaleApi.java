@@ -29,25 +29,31 @@ public class SaleApi {
 
     @GetMapping
     @ApiOperation(value = "Retrieve all sales")
-    public Flux<SaleResponseDto> getAllSales() {
-        return saleEsService.getAllSales();
+    public Flux<SaleResponseDto> fetchAllSales() {
+        return saleEsService.fetchAllSales();
+    }
+
+    @GetMapping("/search")
+    @ApiOperation(value = "Retrieve sales by parameters")
+    public Flux<SaleResponseDto> fetchSalesByParameters(@RequestParam String moneyType) {
+        return saleEsService.findByMoneyType(moneyType);
     }
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Post new sale")
     public Mono saveSale(@RequestBody SaleSaveRequestDto item) {
-        saleService.saveMono(item)
+        saleService.saveSale(item)
                 .subscribe(result -> logger.info("Entity has been saved to mongo db : {}", result));
 //        saleEsService.saveNewSale(sale).subscribe(result -> logger.info("Entity has been saved: {}", result));
         return null;
     }
 
     @PostMapping("/update")
-    @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Post new sale")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Update sale")
     public Mono updateSale(@RequestBody SaleSaveRequestDto item) {
-        saleService.updateMono(item)
+        saleService.updateSale(item)
                 .subscribe(result -> logger.info("Entity has been updated to mongo db : {}", result));
         return null;
     }
@@ -59,25 +65,40 @@ public class SaleApi {
         saleService.delete(item.getId());
     }
 
-    @PostMapping("/excelSale")
+    @PostMapping("/exportExcel")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get sale excel")
+    @ApiOperation(value = "Export sale excel")
     public Object excelSale() {
-        ByteArrayResource resource = saleEsService.excelSale();
+        ByteArrayResource resource = saleEsService.excelSale(null);
 
-//        return ResponseEntity.ok().contentType(MediaType.parseMediaType(MediaType.MULTIPART_FORM_DATA_VALUE))
-        return ResponseEntity.ok().contentType(new MediaType("application", "vnd.ms-excel"))
+        return ResponseEntity
+                .ok()
+                .contentType(new MediaType("application", "vnd.ms-excel"))
             .body(resource);
         //return resource;
     }
 
-    @GetMapping("/excelSales")
+    @GetMapping("/exportExcelByParameters")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get sale excel")
-    public Object excelSales() {
-        ByteArrayResource resource = saleEsService.excelSale();
+    @ApiOperation(value = "Export sale excel with parameter")
+    public Object excelSaleByParameters(@RequestParam String moneyType) {
+        ByteArrayResource resource = saleEsService.excelSale(moneyType);
 
-        return ResponseEntity.ok().contentType(new MediaType("application", "vnd.ms-excel"))
+        return ResponseEntity
+                .ok()
+                .contentType(new MediaType("application", "vnd.ms-excel"))
+                .body(resource);
+    }
+
+    @GetMapping("/exportSales")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Export sale excel")
+    public Object excelSales() {
+        ByteArrayResource resource = saleEsService.excelSale(null);
+
+        return ResponseEntity
+                .ok()
+                .contentType(new MediaType("application", "vnd.ms-excel"))
                 .body(resource);
     }
 }

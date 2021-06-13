@@ -1,28 +1,25 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
+      <el-input v-model="listQuery.title" placeholder="Müşteri" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.importance" placeholder="Müşteri" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select>
-      <el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">
+      <el-select v-model="listQuery.moneyType" placeholder="Para Birimi" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in moneyTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
       </el-select>
       <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+        Ara
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        Add
+        Ekle
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        Export
+        Excel İndir
       </el-button>
-      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        reviewer
-      </el-checkbox>
     </div>
 
     <el-table
@@ -89,10 +86,10 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Cancel
+          İptal Et
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
+          Onayla
         </el-button>
       </div>
     </el-dialog>
@@ -113,7 +110,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle,fetchSaleList, createSale, deleteSale, getExcelSale, updateSale, getExcelSales } from '@/api/article'
+import { fetchPv,fetchSaleList, fetchSaleSearchList ,createSale, updateSale, deleteSale, exportSaleExcel, exportSaleExcelByParameters } from '@/api/article'
 import {get} from "@/api/inline-edit";
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -167,34 +164,33 @@ export default {
         limit: 20,
         importance: undefined,
         title: undefined,
-        type: undefined,
-        sort: '+id'
+        moneyType: undefined,
+        sort: '-date'
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
       moneyTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      sortOptions: [{ label: 'Tarih Artan', key: '+date' }, { label: 'Tarih Azalan', key: '-date' }, { label: 'ID Artan', key: '+id' }, { label: 'ID Azalan', key: '-id' } ],
       statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
       temp: {
         id: undefined,
         importance: 1,
         remark: '',
         timestamp: new Date(),
         title: '',
-        type: '',
+        moneyType: '',
         status: 'published'
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: 'Güncelle',
+        create: 'Yeni Kayıt'
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        moneyType: [{ required: true, message: 'type is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
@@ -236,12 +232,26 @@ export default {
     },*/
     handleFilter() {
       this.listQuery.page = 1
-      this.getList()
+      this.getSearchList()
+    },
+    getSearchList() {
+      this.listLoading = true
+      console.log(this.listQuery)
+      fetchSaleSearchList(this.listQuery).then(response => {
+        console.log(response)
+        this.list = response.map(v => {
+            v.id = v.id
+            return v
+        })
+      })
+      this.listLoading = false
     },
     sortChange(data) {
       const { prop, order } = data
       if (prop === 'id') {
         this.sortByID(order)
+      } else if (prop === 'date') {
+        this.sortByDate(order)
       }
     },
     sortByID(order) {
@@ -249,6 +259,14 @@ export default {
         this.listQuery.sort = '+id'
       } else {
         this.listQuery.sort = '-id'
+      }
+      this.handleFilter()
+    },
+    sortByDate(order) {
+      if (order === 'ascending') {
+        this.listQuery.sort = '+date'
+      } else {
+        this.listQuery.sort = '-date'
       }
       this.handleFilter()
     },
@@ -277,14 +295,12 @@ export default {
           //this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           createSale(this.temp)
             .then(() => {
-            //this.list.unshift(this.temp)
-            //this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
-            })
+              this.$notify({
+                title: 'Success',
+                message: 'Created Successfully',
+                type: 'success',
+                duration: 5000
+              })
           })
         }
       })
@@ -336,44 +352,62 @@ export default {
     },
     handleDownload() {
       this.downloadLoading = true
-      getExcelSale()
-
-      .then((res) => {
-      //  let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
-      //  console.log(res)
-        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-          window.navigator.msSaveOrOpenBlob(blob,'Sale Excel');
-        }else{
-          /*
-          const link = document.createElement('a')
-          link.style.display = 'none'
-          link.href = URL.createObjectURL(blob)
-          link.download ='Sale Excel' //downloaded file name
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-          console.log(res)
-          */
-        
+      if(this.listQuery.moneyType != '') {
+        exportSaleExcelByParameters(this.listQuery).then((res) => {
           let blob = new Blob([res], {
-            type: 'application/vnd.ms-excel'
-          }); // 2. Get the blob setting file type in the response object returned by the request. Here is excel as an example.
-          
-          let url = URL.createObjectURL(blob); // 3. Create a temporary url pointing to the blob object
-          console.log(url)
-          // 4. After creating the url, you can simulate a series of operations on this file object, for example: preview, download
-          let a = document.createElement("a");
-          a.href = url;
-          //a.href = "http://localhost:8011/sale/excelSales?token=token";
-          a.download = "Export";
-          a.click();
-          // 5. Release this temporary object url
-          window.URL.revokeObjectURL(url);
-        }
-        }).catch(error => {
-            console.log(error)
-        })
+              type: 'application/vnd.ms-excel'
+          });
+          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(blob,'Sale Excel');
+          }else{
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "Export";
+            a.click();            
+            window.URL.revokeObjectURL(url);
+          }
+          }).catch(error => {
+              console.log(error)
+          })
 
+      } else {
+        exportSaleExcel().then((res) => {
+          //  let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
+          //  console.log(res)
+          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(blob,'Sale Excel');
+          }else{
+            /*
+            const link = document.createElement('a')
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+            link.download ='Sale Excel' //downloaded file name
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            console.log(res)
+            */
+          
+            let blob = new Blob([res], {
+              type: 'application/vnd.ms-excel'
+            }); // 2. Get the blob setting file type in the response object returned by the request. Here is excel as an example.
+            
+            let url = URL.createObjectURL(blob); // 3. Create a temporary url pointing to the blob object
+            
+            // 4. After creating the url, you can simulate a series of operations on this file object, for example: preview, download
+            let a = document.createElement("a");
+            a.href = url;
+            //a.href = "http://localhost:8011/sale/excelSales?token=token";
+            a.download = "Export";
+            a.click();
+            // 5. Release this temporary object url
+            window.URL.revokeObjectURL(url);
+          }
+          }).catch(error => {
+              console.log(error)
+          })
+      }
       this.downloadLoading = false
       /*this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {

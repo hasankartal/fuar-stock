@@ -48,7 +48,7 @@ service.interceptors.response.use(
     //return res
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 20000) {
-      if(response.status ==200) {
+      if(response.status ==200 || response.status == 201) {
         return res
       }
       Message({

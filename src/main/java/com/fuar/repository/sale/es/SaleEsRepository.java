@@ -9,4 +9,6 @@ public interface SaleEsRepository extends ReactiveElasticsearchRepository<SaleEs
 
     Mono<Void> deleteById(Long id);
     Flux<SaleEs> findByAmount(Float amount);
+
+    Flux<SaleEs> findByMoney(String money);
 }

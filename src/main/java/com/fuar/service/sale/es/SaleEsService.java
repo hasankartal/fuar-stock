@@ -28,7 +28,7 @@ public class SaleEsService {
 
     private final SaleEsRepository saleEsRepository;
 
-    public Flux<SaleResponseDto> getAllSales() {
+    public Flux<SaleResponseDto> fetchAllSales() {
         return findAll().map(this::mapToDto);
     }
 
@@ -52,7 +52,11 @@ public class SaleEsService {
                 .build();
     }
 
-    public Mono<SaleEs> saveNewSale(Sale sale) {
+    public Flux<SaleResponseDto> findByMoneyType(String moneyType) {
+        return saleEsRepository.findByMoney(moneyType).map(this::mapToDto);
+    }
+
+    public Mono<SaleEs> saveNewSaleEs(Sale sale) {
         Mono<SaleEs> ps = saleEsRepository.save(
                 SaleEs.builder()
                         .id(sale.getId())
@@ -63,7 +67,7 @@ public class SaleEsService {
         return ps;
     }
 
-    public Mono<SaleEs> updateSale(Sale sale) {
+    public Mono<SaleEs> updateSaleEs(Sale sale) {
         SaleEs saleEs = saleEsRepository.findById(sale.getId()).block();
 
         saleEs.setId(sale.getId());
@@ -74,17 +78,23 @@ public class SaleEsService {
         Mono<SaleEs> ps = saleEsRepository.save(saleEs);
         return ps;
     }
+
     public void delete(Long id) {
         saleEsRepository.deleteById(id).subscribe(result -> logger.info("Entity has been deleted from elastic search: {}", result));
     }
 
-    public ByteArrayResource excelSale() {
+    public ByteArrayResource excelSale(String moneyType) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
 
         arrangeHeader(sheet);
 
-        Flux<SaleResponseDto> saleResponseDtoFlux = getAllSales();
+        Flux<SaleResponseDto> saleResponseDtoFlux = null;
+        if (moneyType == null) {
+            saleResponseDtoFlux = fetchAllSales();
+        } else {
+            saleResponseDtoFlux = findByMoneyType(moneyType);
+        }
         List<SaleResponseDto> saleResponseDtoList = saleResponseDtoFlux.collectList().block();
         int numberOfRow = 1;
         for (SaleResponseDto saleResponseDto: saleResponseDtoList ) {
@@ -142,7 +152,10 @@ public class SaleEsService {
         numberOfColumn++;
 
         Cell orderDateCell = row.createCell(numberOfColumn);
-        orderDateCell.setCellValue(saleResponseDto.getOrderDate());
+        Locale locale = new Locale("tr", "TR");
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+        String date = dateFormat.format(saleResponseDto.getOrderDate());
+        orderDateCell.setCellValue(date);
         numberOfColumn++;
     }
 

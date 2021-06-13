@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 import id from "element-ui/src/locale/lang/id";
+import qs from 'qs';
 
 export function fetchList(query) {
   return request({
@@ -33,13 +34,6 @@ export function createArticle(data) {
   })
 }
 
-export function getSale() {
-  request({
-    url: 'http://localhost:8011/sale?token=token',
-    method: 'get'
-  })
-}
-
 export function fetchSaleList() {
  /* get('http://localhost:8011/sale?token=token').then(response => {
     //this.total = 3
@@ -59,9 +53,31 @@ export function fetchSaleList() {
 
 }
 
+export function fetchSaleSearchList(data) {
+   return request({
+     url: 'http://localhost:8011/sale/search?token=token',
+     method: 'get',
+     params: {
+      moneyType: data.moneyType
+    },
+    paramsSerializer: (params) => {
+      return qs.stringify(params, { arrayFormat: 'repeat' })
+    },
+   })
+ 
+}
+ 
 export function createSale(data) {
-  request({
+  return request({
     url: 'http://localhost:8011/sale/add?token=token',
+    method: 'post',
+    data
+  })
+}
+
+export function updateSale(data) {
+  request({
+    url: 'http://localhost:8011/sale/update?token=token',
     method: 'post',
     data
   })
@@ -76,20 +92,26 @@ export function deleteSale(data) {
   })
 }
 
-export function getExcelSale(data) {
-  //  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
+export function exportSaleExcel(data) {
   return request({
-      url: 'http://localhost:8011/sale/excelSale?token=token',
+      url: 'http://localhost:8011/sale/exportExcel?token=token',
       method: 'post',
       responseType: 'blob',
       data
     })
-  }
-
-export function updateSale(data) {
-  request({
-    url: 'http://localhost:8011/sale/update?token=token',
-    method: 'post',
-    data
-  })
 }
+
+export function exportSaleExcelByParameters(data) {
+  return request({
+      url: 'http://localhost:8011/sale/exportExcelByParameters?token=token',
+      method: 'get',
+      responseType: 'blob',
+      params: {
+        moneyType: data.moneyType
+      },
+      paramsSerializer: (params) => {
+        return qs.stringify(params, { arrayFormat: 'repeat' })
+      }
+    })
+}
+

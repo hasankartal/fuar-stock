@@ -24,7 +24,7 @@ public class SaleService {
     private final SequenceGeneratorService sequenceGeneratorService;
 
     @Transactional
-    public Mono saveMono(SaleSaveRequestDto request) {
+    public Mono saveSale(SaleSaveRequestDto request) {
         String operationType = "CREATED";
 
         Sale sale = Sale.builder()
@@ -36,14 +36,14 @@ public class SaleService {
                 .build();
 
         Mono<Sale> monoSale = saleRepository.save(sale);
-        saleEsService.saveNewSale(sale)
+        saleEsService.saveNewSaleEs(sale)
                 .subscribe(result -> logger.info("Entity has been saved to elastic search: {}", result));
 
         return monoSale;
     }
 
     @Transactional
-    public Mono updateMono(SaleSaveRequestDto request) {
+    public Mono updateSale(SaleSaveRequestDto request) {
         Sale sale = saleRepository.findById(request.getId()).block();
 
         sale.setId(request.getId());
@@ -53,7 +53,7 @@ public class SaleService {
         sale.setOperation("UPDATED");
 
         Mono<Sale> monoSale = saleRepository.save(sale);
-        saleEsService.updateSale(sale)
+        saleEsService.updateSaleEs(sale)
                 .subscribe(result -> logger.info("Entity has been updated to elastic search: {}", result));
 
         return monoSale;
