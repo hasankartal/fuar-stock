@@ -90,6 +90,7 @@ public class SaleEsService {
         arrangeHeader(sheet);
 
         Flux<SaleResponseDto> saleResponseDtoFlux = null;
+        
         if (moneyType == null) {
             saleResponseDtoFlux = fetchAllSales();
         } else {
