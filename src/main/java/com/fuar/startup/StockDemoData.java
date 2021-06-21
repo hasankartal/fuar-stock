@@ -1,7 +1,7 @@
 package com.fuar.startup;
 
 import com.fuar.common.MoneyType;
-import com.fuar.model.sale.SaleSaveRequest;
+import com.fuar.model.sale.SaleSaveRequestDto;
 import com.fuar.service.sale.SaleService;
 import com.fuar.service.stock.StockService;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,8 @@ public class StockDemoData {
         });*/
         IntStream.range(0, 5).forEach(item -> {
             saleService.save(
-                    SaleSaveRequest.builder()
-                            .id(new Random().nextLong())
+                    SaleSaveRequestDto.builder()
+                           // .id(new Random().nextLong())
                             .amount(new Random().nextFloat())
                             .moneyType(MoneyType.TL.toString())
                             .orderDate(new Date())
