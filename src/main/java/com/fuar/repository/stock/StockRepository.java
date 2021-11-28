@@ -1,9 +1,10 @@
 package com.fuar.repository.stock;
 
 import com.fuar.domain.stock.Stock;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface StockRepository extends MongoRepository<Stock, Long> {
+@Repository
+public interface StockRepository extends JpaRepository<Stock, Long> {
 
 }

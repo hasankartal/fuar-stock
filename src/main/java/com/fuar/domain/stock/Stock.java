@@ -1,18 +1,24 @@
 package com.fuar.domain.stock;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.fuar.domain.EntityBase;
+import com.fuar.domain.customer.Customer;
+import lombok.*;
 
-@Document(collection = "stock")
-@Getter
-@Setter
-@Builder
-public class Stock {
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.Date;
 
-    @Id
-    private Long id;
+//@Document(collection = "stock")
+@Entity
+@Table
+@Data
+@NoArgsConstructor
+public class Stock extends EntityBase {
+    private String stock;
+
+    @Builder
+    public Stock(long id, String stock, Date orderDate, String operation) {
+        super(id, new Date(), operation, new Date());
+        this.stock = stock;
+    }
 }

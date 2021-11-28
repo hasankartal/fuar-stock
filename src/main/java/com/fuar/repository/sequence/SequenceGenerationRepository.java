@@ -1,13 +1,11 @@
 package com.fuar.repository.sequence;
 
 import com.fuar.domain.DatabaseSequence;
-import com.fuar.domain.user.User;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import reactor.core.publisher.Mono;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface SequenceGenerationRepository extends MongoRepository<DatabaseSequence, String> {
+@Repository
+public interface SequenceGenerationRepository extends JpaRepository<DatabaseSequence, String> {
 //    Mono<DatabaseSequence> findBySeq(Long seq);
-
 }
 

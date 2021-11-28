@@ -32,11 +32,10 @@ public class UserApi {
     @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
     public User saveSale(@RequestBody UserRequestDto item) {
-        User user = User.builder()
-                .id(new Random().nextLong())
-                .userName(item.getUserName())
-                .password(item.getPassword())
-                .build();
+        User user = new User();
+        user.setUserName(item.getUserName());
+        user.setPassword(item.getPassword());
+
         userService.save(user);
 
         return null;

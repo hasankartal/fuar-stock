@@ -4,14 +4,16 @@ import com.fuar.domain.EntityBase;
 import com.fuar.domain.customer.Customer;
 import lombok.*;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 
-@Document(collection = "sale")
-@Getter
-@Setter
+//@Document(collection = "sale")
+@Entity
+@Table
+@Data
+@NoArgsConstructor
 public class Sale extends EntityBase {
 
     @Transient
@@ -21,15 +23,11 @@ public class Sale extends EntityBase {
     private String money;
     private Date orderDate;
 
-    @DBRef
-    private Customer customer;
-
     @Builder
-    public Sale(long id, Float amount, String money, Date orderDate, String operation, Customer customer) {
+    public Sale(long id, Float amount, String money, Date orderDate, String operation) {
         super(id, new Date(), operation, new Date());
         this.amount = amount;
         this.money = money;
         this.orderDate = orderDate;
-        this.customer = customer;
     }
 }

@@ -1,21 +1,17 @@
 package com.fuar.domain.log;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.Date;
+import com.fuar.domain.EntityBase;
+import lombok.*;
 
-@Document(collection = "token")
-@Getter
-@Setter
-@Builder
-public class Token {
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-    @Id
-    private Long id;
+//@Document(collection = "token")
+@Entity
+@Table
+@Data
+public class Token extends EntityBase {
+
     private Boolean isActive;
     private String token;
 }

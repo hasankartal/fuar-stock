@@ -6,6 +6,7 @@ import com.fuar.model.customer.CustomerResponseDto;
 import com.fuar.model.customer.CustomerSaveRequestDto;
 import com.fuar.repository.customer.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerService {
 
-    private final CustomerRepository repository;
+    @Autowired
+    private CustomerRepository repository;
 
     public Customer save(CustomerSaveRequestDto request) {
         return  repository.save(Customer.
                 builder()
-                .id(request.getId())
                 .name(request.getName())
                 .surname(request.getSurname())
                 .build());

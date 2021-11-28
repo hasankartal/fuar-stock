@@ -1,20 +1,19 @@
 package com.fuar.domain.user;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import com.fuar.domain.EntityBase;
+import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "user")
-@Getter
-@Setter
-@Builder
-public class User {
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-    @Id
-    private Long id;
+//@Document(collection = "user")
+@Entity
+@Table
+@Data
+@NoArgsConstructor
+public class User extends EntityBase {
+
     private String userName;
     private String password;
 

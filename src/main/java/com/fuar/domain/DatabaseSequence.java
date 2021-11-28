@@ -1,13 +1,19 @@
 package com.fuar.domain;
 
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.*;
 
+import javax.persistence.*;
+
+@Entity
+@Table
 @Data
-@Document(collection = "database_sequences")
+@Getter
+@Setter
+@NoArgsConstructor
+//@Document(collection = "database_sequences")
 public class DatabaseSequence {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     private long seq;
 

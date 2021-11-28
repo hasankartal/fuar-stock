@@ -9,6 +9,7 @@ import com.fuar.service.log.TokenService;
 import com.fuar.util.TokenGenerator;
 import com.fuar.util.Utils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,8 +21,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository repository;
-    private final TokenService tokenService;
+    @Autowired
+    private UserRepository repository;
+
+    @Autowired
+    private TokenService tokenService;
 
     public List<UserResponseDto> getAll() {
         List<User> userList = repository.findAll();

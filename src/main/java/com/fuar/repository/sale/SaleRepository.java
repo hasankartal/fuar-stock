@@ -1,14 +1,13 @@
 package com.fuar.repository.sale;
 
 import com.fuar.domain.sale.Sale;
-import com.fuar.domain.sale.es.SaleEs;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import reactor.core.publisher.Flux;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface SaleRepository extends MongoRepository<Sale, Long> {
+@Repository
+public interface SaleRepository extends JpaRepository<Sale, Long> {
 
     List<Sale> findByMoney(String money);
 }

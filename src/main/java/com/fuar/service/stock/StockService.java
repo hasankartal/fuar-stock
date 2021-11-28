@@ -9,6 +9,7 @@ import com.fuar.model.stock.StockSaveRequestDto;
 import com.fuar.repository.stock.StockRepository;
 import com.fuar.service.stock.es.StockEsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -18,7 +19,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StockService {
-    private final StockRepository stockRepository;
+    @Autowired
+    private StockRepository stockRepository;
     //private final StockEsService stockEsService;
 
     public List<StockResponseDto> getAll() {
@@ -42,7 +44,6 @@ public class StockService {
 
     public StockResponseDto save(StockSaveRequestDto request) {
         Stock stock = Stock.builder()
-                .id(request.getId())
                 .build();
         stock = stockRepository.save(stock);
 

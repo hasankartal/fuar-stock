@@ -1,22 +1,20 @@
 package com.fuar.domain.log;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import com.fuar.domain.EntityBase;
+import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Table;
 import java.util.Date;
 
-@Document(collection = "logtable")
-@Getter
-@Setter
-@Builder
-public class LogRestIncoming {
-
-    @Id
-    private Long id;
+//@Document(collection = "logtable")
+@Entity
+@Table
+@Data
+public class LogRestIncoming extends EntityBase {
 
     private String endpointUrl;
     private String operationType;
@@ -28,4 +26,7 @@ public class LogRestIncoming {
     private String restRequestId;
     private String contentPayload;
 
+    public LogRestIncoming() {
+
+    }
 }

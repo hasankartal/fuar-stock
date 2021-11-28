@@ -3,13 +3,15 @@ package com.fuar.service.sequence;
 import com.fuar.domain.DatabaseSequence;
 import com.fuar.repository.sequence.SequenceGenerationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class SequenceGeneratorService {
 
-    private final SequenceGenerationRepository repository;
+    @Autowired
+    private SequenceGenerationRepository repository;
 
     public long generateSequence(String seqName) {
         DatabaseSequence mono = repository.findById(seqName).orElse(null);

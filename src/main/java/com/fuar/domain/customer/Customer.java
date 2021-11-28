@@ -1,19 +1,20 @@
 package com.fuar.domain.customer;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.fuar.domain.EntityBase;
+import lombok.*;
 
-@Document(collection = "customer")
-@Getter
-@Setter
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.Date;
+
+//@Document(collection = "customer")
+@Entity
+@Table
+@Data
 @Builder
-public class Customer {
-
-    @Id
-    private Long id;
+@NoArgsConstructor
+@AllArgsConstructor
+public class Customer extends EntityBase {
 
     private String name;
     private String surname;

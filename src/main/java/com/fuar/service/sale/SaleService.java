@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -29,16 +30,17 @@ import java.util.*;
 public class SaleService {
     Logger logger = LoggerFactory.getLogger(SaleService.class);
 
-    private final SaleRepository saleRepository;
+    @Autowired
+    private SaleRepository saleRepository;
     //private final SaleEsService saleEsService;
-    private final SequenceGeneratorService sequenceGeneratorService;
+    //private final SequenceGeneratorService sequenceGeneratorService;
 
     @Transactional
     public Sale saveSale(SaleSaveRequestDto request) {
         String operationType = "CREATED";
 
         Sale sale = Sale.builder()
-                .id(sequenceGeneratorService.generateSequence(Sale.SEQUENCE_NAME))
+      //          .id(sequenceGeneratorService.generateSequence(Sale.SEQUENCE_NAME))
                 .amount(request.getAmount())
                 .money(request.getMoneyType())
                 .orderDate(new Date())
