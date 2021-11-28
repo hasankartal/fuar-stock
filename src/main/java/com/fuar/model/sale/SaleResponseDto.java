@@ -1,5 +1,6 @@
 package com.fuar.model.sale;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fuar.common.MoneyType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,5 +26,10 @@ public class SaleResponseDto {
     private String moneyType;
 
     @ApiModelProperty(notes="Date is invoice date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private Date orderDate;
+
+    @NotNull
+    @ApiModelProperty(notes="Customer who buys product.")
+    private String customer;
 }

@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import moment from 'moment'
 import id from "element-ui/src/locale/lang/id";
 import qs from 'qs';
 
@@ -58,7 +59,8 @@ export function fetchSaleSearchList(data) {
      url: 'http://localhost:8011/sale/search?token=token',
      method: 'get',
      params: {
-      moneyType: data.moneyType
+      moneyType: data.moneyType,
+      orderDate: moment(String(data.orderDate)).format('DD-MM-YYYY')
     },
     paramsSerializer: (params) => {
       return qs.stringify(params, { arrayFormat: 'repeat' })

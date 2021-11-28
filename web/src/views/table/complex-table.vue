@@ -11,6 +11,7 @@
       <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
+      <el-date-picker v-model="listQuery.orderDate" type="datetime" :inline="true" format= "dd-MM-yyyy" placeholder="Please pick a date" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Ara
       </el-button>
@@ -50,7 +51,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Tarih" width="150px" align="center">
+      <el-table-column label="Tarih" width="200px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.orderDate  }}</span>
         </template>
@@ -115,6 +116,7 @@ import {get} from "@/api/inline-edit";
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },

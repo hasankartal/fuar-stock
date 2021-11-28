@@ -12,7 +12,6 @@ import java.util.Date;
 @Document(collection = "logtable")
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
 @Builder
 public class LogRestIncoming {
 

@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "user")
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
 @Builder
 public class User {
 

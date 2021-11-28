@@ -1,4 +1,7 @@
 package com.fuar.repository.customer;
 
-public interface CustomerRepository {
+import com.fuar.domain.customer.Customer;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface CustomerRepository extends MongoRepository<Customer, Long> {
 }

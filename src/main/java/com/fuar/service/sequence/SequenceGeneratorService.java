@@ -12,14 +12,14 @@ public class SequenceGeneratorService {
     private final SequenceGenerationRepository repository;
 
     public long generateSequence(String seqName) {
-        DatabaseSequence mono = repository.findById(seqName).block();
+        DatabaseSequence mono = repository.findById(seqName).orElse(null);
         if(mono != null) {
             DatabaseSequence db = new DatabaseSequence();
             db.setId(seqName);
             long seq = mono.getSeq() + 1;
             db.setSeq(seq);
 
-            repository.save(db).subscribe();
+            repository.save(db);
             return seq;
         } else {
             DatabaseSequence db = new DatabaseSequence();
@@ -27,7 +27,7 @@ public class SequenceGeneratorService {
             long seq = 1;
             db.setSeq(seq);
 
-            repository.save(db).subscribe();
+            repository.save(db);
             return seq;
         }
 /*

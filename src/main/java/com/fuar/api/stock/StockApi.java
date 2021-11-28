@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/stock")
 @RequiredArgsConstructor
@@ -17,7 +19,7 @@ public class StockApi {
     private final StockService stockService;
 
     @GetMapping
-    public Flux<StockResponseDto> getAllProducts() {
+    public List<StockResponseDto> getAllProducts() {
         return stockService.getAll();
     }
 }

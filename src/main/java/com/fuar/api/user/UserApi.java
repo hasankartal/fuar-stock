@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Random;
 
 @RestController
@@ -24,20 +25,19 @@ public class UserApi {
     private final UserService userService;
 
     @GetMapping
-    public Flux<UserResponseDto> getAllSales() {
+    public List<UserResponseDto> getAllSales() {
         return userService.getAll();
     }
 
     @PostMapping("/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono saveSale(@RequestBody UserRequestDto item) {
+    public User saveSale(@RequestBody UserRequestDto item) {
         User user = User.builder()
                 .id(new Random().nextLong())
                 .userName(item.getUserName())
                 .password(item.getPassword())
                 .build();
-        userService.save(user)
-                .subscribe(result -> logger.info("Entity has been saved: {}", result));
+        userService.save(user);
 
         return null;
     }

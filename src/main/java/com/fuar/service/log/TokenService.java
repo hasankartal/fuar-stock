@@ -5,7 +5,6 @@ import com.fuar.model.log.TokenDto;
 import com.fuar.repository.log.token.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +15,7 @@ public class TokenService {
         return true;
     }
 
-    public Mono<Token> save(TokenDto request) {
+    public Token save(TokenDto request) {
         return repository.save(Token
                 .builder()
                 .id(request.getId())

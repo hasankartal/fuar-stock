@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 public class LogRestIncomingService {
     private final LogRestIncomingRepository repository;
 
-    public Mono<LogRestIncoming> save(LogRestIncomingDto request) {
+    public LogRestIncoming save(LogRestIncomingDto request) {
         return  repository.save(LogRestIncoming.
                 builder()
                 .id(request.getId())

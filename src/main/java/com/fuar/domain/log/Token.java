@@ -11,7 +11,6 @@ import java.util.Date;
 @Document(collection = "token")
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
 @Builder
 public class Token {
 

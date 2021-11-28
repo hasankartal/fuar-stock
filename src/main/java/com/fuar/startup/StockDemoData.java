@@ -26,7 +26,7 @@ public class StockDemoData {
                     StockSaveRequest.builder()
                             .id(new Random().nextLong())
                             .build());
-        });*/
+        });
         IntStream.range(0, 5).forEach(item -> {
             saleService.save(
                     SaleSaveRequestDto.builder()
@@ -36,6 +36,6 @@ public class StockDemoData {
                             .orderDate(new Date())
                             .build());
         });
-
+*/
     }
 }

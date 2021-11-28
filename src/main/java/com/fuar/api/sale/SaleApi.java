@@ -1,7 +1,9 @@
 package com.fuar.api.sale;
 
+import com.fuar.domain.sale.Sale;
 import com.fuar.model.sale.SaleResponseDto;
 import com.fuar.model.sale.SaleSaveRequestDto;
+import com.fuar.model.sale.SaleSearchRequestDto;
 import com.fuar.service.sale.es.SaleEsService;
 import com.fuar.service.sale.SaleService;
 import io.swagger.annotations.Api;
@@ -14,8 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/sale")
@@ -29,22 +32,21 @@ public class SaleApi {
 
     @GetMapping
     @ApiOperation(value = "Retrieve all sales")
-    public Flux<SaleResponseDto> fetchAllSales() {
-        return saleEsService.fetchAllSales();
+    public List<SaleResponseDto> fetchAllSales() {
+        return saleService.fetchAllSales();
     }
 
     @GetMapping("/search")
     @ApiOperation(value = "Retrieve sales by parameters")
-    public Flux<SaleResponseDto> fetchSalesByParameters(@RequestParam String moneyType) {
-        return saleEsService.findByMoneyType(moneyType);
+    public List<SaleResponseDto> fetchSalesByParameters(@Valid SaleSearchRequestDto saleSearchRequestDto) {
+        return saleService.findByMoneyType(saleSearchRequestDto.getMoneyType());
     }
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Post new sale")
-    public Mono saveSale(@RequestBody SaleSaveRequestDto item) {
-        saleService.saveSale(item)
-                .subscribe(result -> logger.info("Entity has been saved to mongo db : {}", result));
+    public Sale saveSale(@RequestBody SaleSaveRequestDto item) {
+        Sale sale = saleService.saveSale(item);
 //        saleEsService.saveNewSale(sale).subscribe(result -> logger.info("Entity has been saved: {}", result));
         return null;
     }
@@ -52,9 +54,8 @@ public class SaleApi {
     @PostMapping("/update")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Update sale")
-    public Mono updateSale(@RequestBody SaleSaveRequestDto item) {
-        saleService.updateSale(item)
-                .subscribe(result -> logger.info("Entity has been updated to mongo db : {}", result));
+    public Sale updateSale(@RequestBody SaleSaveRequestDto item) {
+        saleService.updateSale(item);
         return null;
     }
 
@@ -69,7 +70,7 @@ public class SaleApi {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Export sale excel")
     public Object excelSale() {
-        ByteArrayResource resource = saleEsService.excelSale(null);
+        ByteArrayResource resource = saleService.excelSale(null);
 
         return ResponseEntity
                 .ok()
@@ -82,7 +83,7 @@ public class SaleApi {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Export sale excel with parameter")
     public Object excelSaleByParameters(@RequestParam String moneyType) {
-        ByteArrayResource resource = saleEsService.excelSale(moneyType);
+        ByteArrayResource resource = saleService.excelSale(moneyType);
 
         return ResponseEntity
                 .ok()

@@ -91,8 +91,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
                 }
             }
 */
-            service.save(restIncomingRequest).subscribe(result -> logger.debug("Entity has been saved: {}", result));
-
+            service.save(restIncomingRequest);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
