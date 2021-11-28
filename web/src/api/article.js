@@ -115,3 +115,85 @@ export function exportSaleExcelByParameters(data) {
     })
 }
 
+export function fetchCustomerList() {
+  /* get('http://localhost:8011/sale?token=token').then(response => {
+     //this.total = 3
+     this.list = response.data.map(v => {
+     v.id = v.id
+     v.amount = v.amount
+     return v
+   })
+   setTimeout(() => {
+     this.listLoading = false
+     }, 1.5 * 1000)
+   }) */
+   return request({
+     url: 'http://localhost:8011/customer?token=token',
+     method: 'get'
+   })
+ }
+ 
+ export function fetchCustomerSearchList(data) {
+    return request({
+      url: 'http://localhost:8011/customer/search?token=token',
+      method: 'get',
+      params: {
+       name: data.surname,
+     surname: data.surname
+     },
+     paramsSerializer: (params) => {
+       return qs.stringify(params, { arrayFormat: 'repeat' })
+     },
+    })
+  
+ }
+  
+ 
+ export function createCustomer(data) {
+   return request({
+     url: 'http://localhost:8011/customer/add?token=token',
+     method: 'post',
+     data
+   })
+ }
+ 
+ export function updateCustomer(data) {
+   request({
+     url: 'http://localhost:8011/customer/update?token=token',
+     method: 'post',
+     data
+   })
+ }
+ 
+ export function deleteCustomer(data) {
+ //  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
+   request({
+     url: 'http://localhost:8011/customer/delete?token=token',
+     method: 'delete',
+     data
+   })
+ }
+ 
+ export function exportCustomerExcel(data) {
+   return request({
+       url: 'http://localhost:8011/customer/exportExcel?token=token',
+       method: 'post',
+       responseType: 'blob',
+       data
+     })
+ }
+ 
+ export function exportCustomerExcelByParameters(data) {
+   return request({
+       url: 'http://localhost:8011/customer/exportExcelByParameters?token=token',
+       method: 'get',
+       responseType: 'blob',
+       params: {
+       name: data.surname,
+       surname: data.surname
+       },
+       paramsSerializer: (params) => {
+         return qs.stringify(params, { arrayFormat: 'repeat' })
+       }
+     })
+ }
