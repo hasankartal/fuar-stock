@@ -135,67 +135,219 @@ export function fetchCustomerList() {
    })
  }
  
- export function fetchCustomerSearchList(data) {
+export function fetchCustomerSearchList(data) {
+  return request({
+    url: 'http://localhost:8011/customer/search?token=token',
+    method: 'get',
+    params: {
+      name: data.surname,
+    surname: data.surname
+    },
+    paramsSerializer: (params) => {
+      return qs.stringify(params, { arrayFormat: 'repeat' })
+    },
+  })
+}
+
+export function createCustomer(data) {
+  return request({
+    url: 'http://localhost:8011/customer/add?token=token',
+    method: 'post',
+    data
+  })
+}
+
+export function updateCustomer(data) {
+  request({
+    url: 'http://localhost:8011/customer/update?token=token',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteCustomer(data) {
+//  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
+  request({
+    url: 'http://localhost:8011/customer/delete?token=token',
+    method: 'delete',
+    data
+  })
+}
+
+export function exportCustomerExcel(data) {
+  return request({
+      url: 'http://localhost:8011/customer/exportExcel?token=token',
+      method: 'post',
+      responseType: 'blob',
+      data
+    })
+}
+
+export function exportCustomerExcelByParameters(data) {
+  return request({
+      url: 'http://localhost:8011/customer/exportExcelByParameters?token=token',
+      method: 'get',
+      responseType: 'blob',
+      params: {
+      name: data.surname,
+      surname: data.surname
+      },
+      paramsSerializer: (params) => {
+        return qs.stringify(params, { arrayFormat: 'repeat' })
+      }
+    })
+}
+
+export function fetchInvoiceList() {
+/* get('http://localhost:8011/sale?token=token').then(response => {
+    //this.total = 3
+    this.list = response.data.map(v => {
+    v.id = v.id
+    v.amount = v.amount
+    return v
+  })
+  setTimeout(() => {
+    this.listLoading = false
+    }, 1.5 * 1000)
+  }) */
+  return request({
+    url: 'http://localhost:8011/invoice?token=token',
+    method: 'get'
+  })
+}
+
+export function fetchInvoiceSearchList(data) {
+  return request({
+    url: 'http://localhost:8011/invoice/search?token=token',
+    method: 'get',
+    params: {
+      moneyType: data.moneyType,
+      orderDate: moment(String(data.orderDate)).format('DD-MM-YYYY')
+    },
+    paramsSerializer: (params) => {
+      return qs.stringify(params, { arrayFormat: 'repeat' })
+    },
+  })
+
+}
+
+export function createInvoice(data) {
+  return request({
+    url: 'http://localhost:8011/invoice/add?token=token',
+    method: 'post',
+    data
+  })
+}
+
+export function updateInvoice(data) {
+  request({
+    url: 'http://localhost:8011/invoice/update?token=token',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteInvoice(data) {
+//  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
+  request({
+    url: 'http://localhost:8011/invoice/delete?token=token',
+    method: 'delete',
+    data
+  })
+}
+
+export function exportInvoiceExcel(data) {
+  return request({
+      url: 'http://localhost:8011/invoice/exportExcel?token=token',
+      method: 'post',
+      responseType: 'blob',
+      data
+    })
+}
+
+export function exportInvoiceExcelByParameters(data) {
+  return request({
+      url: 'http://localhost:8011/invoice/exportExcelByParameters?token=token',
+      method: 'get',
+      responseType: 'blob',
+      params: {
+        moneyType: data.moneyType
+      },
+      paramsSerializer: (params) => {
+        return qs.stringify(params, { arrayFormat: 'repeat' })
+      }
+    })
+}
+
+
+
+export function fetchCountryList() {
     return request({
-      url: 'http://localhost:8011/customer/search?token=token',
+      url: 'http://localhost:8011/country?token=token',
+      method: 'get'
+    })
+  }
+  
+  export function fetchCountrySearchList(data) {
+    return request({
+      url: 'http://localhost:8011/country/search?token=token',
       method: 'get',
       params: {
-       name: data.surname,
-     surname: data.surname
-     },
-     paramsSerializer: (params) => {
-       return qs.stringify(params, { arrayFormat: 'repeat' })
-     },
+        moneyType: data.moneyType,
+        orderDate: moment(String(data.orderDate)).format('DD-MM-YYYY')
+      },
+      paramsSerializer: (params) => {
+        return qs.stringify(params, { arrayFormat: 'repeat' })
+      },
     })
   
- }
+  }
   
- 
- export function createCustomer(data) {
-   return request({
-     url: 'http://localhost:8011/customer/add?token=token',
-     method: 'post',
-     data
-   })
- }
- 
- export function updateCustomer(data) {
-   request({
-     url: 'http://localhost:8011/customer/update?token=token',
-     method: 'post',
-     data
-   })
- }
- 
- export function deleteCustomer(data) {
- //  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
-   request({
-     url: 'http://localhost:8011/customer/delete?token=token',
-     method: 'delete',
-     data
-   })
- }
- 
- export function exportCustomerExcel(data) {
-   return request({
-       url: 'http://localhost:8011/customer/exportExcel?token=token',
-       method: 'post',
-       responseType: 'blob',
-       data
-     })
- }
- 
- export function exportCustomerExcelByParameters(data) {
-   return request({
-       url: 'http://localhost:8011/customer/exportExcelByParameters?token=token',
-       method: 'get',
-       responseType: 'blob',
-       params: {
-       name: data.surname,
-       surname: data.surname
-       },
-       paramsSerializer: (params) => {
-         return qs.stringify(params, { arrayFormat: 'repeat' })
-       }
-     })
- }
+  export function createCountry(data) {
+    return request({
+      url: 'http://localhost:8011/country/add?token=token',
+      method: 'post',
+      data
+    })
+  }
+  
+  export function updateCountry(data) {
+    request({
+      url: 'http://localhost:8011/country/update?token=token',
+      method: 'post',
+      data
+    })
+  }
+  
+  export function deleteCountry(data) {
+  //  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
+    request({
+      url: 'http://localhost:8011/country/delete?token=token',
+      method: 'delete',
+      data
+    })
+  }
+  
+  export function exportCountryExcel(data) {
+    return request({
+        url: 'http://localhost:8011/country/exportExcel?token=token',
+        method: 'post',
+        responseType: 'blob',
+        data
+      })
+  }
+  
+  export function exportCountryExcelByParameters(data) {
+    return request({
+        url: 'http://localhost:8011/country/exportExcelByParameters?token=token',
+        method: 'get',
+        responseType: 'blob',
+        params: {
+          code: data.code,
+          name: data.name
+        },
+        paramsSerializer: (params) => {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        }
+      })
+  }

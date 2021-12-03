@@ -41,6 +41,18 @@ const tableRouter = {
       component: () => import('@/views/table/customer-table'),
       name: 'CustomerTable',
       meta: { title: 'Müşteri Tablosu' }
+    },
+    {
+      path: 'invoice-table',
+      component: () => import('@/views/table/invoice-table'),
+      name: 'InvoiceTable',
+      meta: { title: 'Fatura Tablosu' }
+    },
+    {
+      path: 'country-table',
+      component: () => import('@/views/table/country-table'),
+      name: 'CountryTable',
+      meta: { title: 'Ülke Tablosu' }
     }
   ]
 }
