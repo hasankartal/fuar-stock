@@ -3,6 +3,7 @@
     <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="Müşteri Adı" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.surname" placeholder="Müşteri Soyadı" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.address" placeholder="Adres" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Ara
       </el-button>
@@ -42,9 +43,15 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Tarih" width="200px" align="center">
+      <el-table-column label="Adres" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.orderDate  }}</span>
+          <span>{{ row.address }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="Ülke" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.countryName }}</span>
         </template>
       </el-table-column>
 
@@ -68,10 +75,15 @@
           <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item label="Soyad" prop="surname">
-          <el-input v-model="temp.name" />
+          <el-input v-model="temp.surname" />
         </el-form-item>
-        <el-form-item label="Date" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
+        <el-form-item label="Adres" prop="address">
+          <el-input v-model="temp.address" />
+        </el-form-item>
+        <el-form-item label="Ülke" prop="countryId">
+          <el-select v-model="temp.countryId" style="width: 140px" class="filter-item" >
+            <el-option v-for="item in country" :key="item.id" :label="item.value" :value="item.id" />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -100,7 +112,7 @@
 </template>
 
 <script>
-import { fetchPv,fetchCustomerList, fetchCustomerSearchList ,createCustomer, updateCustomer, deleteCustomer, exportCustomerExcel, exportCustomerExcelByParameters } from '@/api/article'
+import { fetchPv, fetchCountryList, fetchCustomerList, fetchCustomerSearchList ,createCustomer, updateCustomer, deleteCustomer, exportCustomerExcel, exportCustomerExcelByParameters } from '@/api/article'
 import {get} from "@/api/inline-edit";
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -144,6 +156,7 @@ export default {
         importance: undefined,
         name: undefined,
         surname: undefined,
+        address: undefined,
         sort: '-date'
       },
       importanceOptions: [1, 2, 3],
@@ -157,6 +170,7 @@ export default {
         timestamp: new Date(),
         title: '',
         moneyType: '',
+        countryId : '',
         status: 'published'
       },
       dialogFormVisible: false,
@@ -168,16 +182,17 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        name: [{ required: true, message: 'name is required', trigger: 'change' }],
-        surname: [{ required: true, message: 'surname is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        name: [{ required: true, message: 'İsim alanı zorunludur', trigger: 'change' }],
+        surname: [{ required: true, message: 'Soyadı alanı zorunludur', trigger: 'change' }],
+        address: [{ required: true, message: 'Adres alanı zorunludur', trigger: 'change' }],
+        countryId: [{ required: true, message: 'Ülke alanı zorunludur', trigger: 'change' }]
       },
       downloadLoading: false
     }
   },
   created() {
     this.getList()
+    this.getCountryList()
   },
   methods: {
     getList() {
@@ -192,23 +207,18 @@ export default {
       this.listLoading = false
     },
       
-    /*
-    getList() {
+    getCountryList() {
       this.listLoading = true
-      fetchSaleList();
-      get('http://localhost:8011/sale?token=token').then(response => {
-        //this.total = 3
-        this.list = response.data.map(v => {
-          v.id = v.id
-          v.amount = v.amount
-          return v
+      fetchCountryList().then(response => {
+        this.country = response.map(v => {
+            v.value = v.name
+            v.id = v.id
+            return v
+        })
       })
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+      this.listLoading = false
+    },
 
-      })
-    },*/
     handleFilter() {
       this.listQuery.page = 1
       this.getSearchList()
@@ -257,6 +267,7 @@ export default {
         timestamp: new Date(),
         title: '',
         status: 'published',
+        countryId : '',
         type: ''
       }
     },
@@ -331,10 +342,12 @@ export default {
     },
     handleDownload() {
       this.downloadLoading = true
-      if(this.listQuery.moneyType != '') {
-        exportCustomerExcelByParameters(this.listQuery).then((res) => {
-          let blob = new Blob([res], {
-              type: 'application/vnd.ms-excel'
+      if( (this.listQuery.name != undefined && this.listQuery.name != '') 
+          || (this.listQuery.surname != undefined && this.listQuery.surname != '')
+          || (this.listQuery.address != undefined && this.listQuery.address != '')  ) {
+          exportCustomerExcel(this.listQuery).then((res) => {
+            let blob = new Blob([res], {
+                type: 'application/vnd.ms-excel'
           });
           if (window.navigator && window.navigator.msSaveOrOpenBlob) {
             window.navigator.msSaveOrOpenBlob(blob,'Sale Excel');
@@ -351,7 +364,7 @@ export default {
           })
 
       } else {
-        exportCustomerExcel().then((res) => {
+        exportCustomerExcel(this.listQuery).then((res) => {
           //  let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
           //  console.log(res)
           if (window.navigator && window.navigator.msSaveOrOpenBlob) {

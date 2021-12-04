@@ -271,6 +271,7 @@ export default {
                 duration: 5000
               })
           })
+          this.list.splice(index, 1)
         }
       })
     },
@@ -282,25 +283,24 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+     
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateCountry(tempData).then(() => {
-//            const index = this.list.findIndex(v => v.id === this.temp.id)
- //           this.list.splice(index, 1, this.temp)
-  //          this.dialogFormVisible = false
-            this.$notify({
+          updateCountry(tempData);
+          this.$notify({
               title: 'Success',
               message: 'Update Successfully',
               type: 'success',
               duration: 2000
-            })
           })
+          this.dialogFormVisible = false
         }
       })
+      getList();
     },
     handleDelete(row, index) {
       this.temp.id = row.id;
@@ -321,7 +321,7 @@ export default {
     },
     handleDownload() {
       this.downloadLoading = true
-      if(this.listQuery.code != '' || this.listQuery.name != '') {
+      if( (this.listQuery.code != undefined && this.listQuery.code != '') || (this.listQuery.name != undefined && this.listQuery.name != '') ) {
         exportCountryExcelByParameters(this.listQuery).then((res) => {
           let blob = new Blob([res], {
               type: 'application/vnd.ms-excel'

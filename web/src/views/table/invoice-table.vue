@@ -67,9 +67,12 @@
         <el-form-item label="Fatura Id" prop="invoiceId">
           <el-input v-model="temp.invoiceId" />
         </el-form-item>
-        <el-form-item label="Müşteri" prop="customer">
-          <el-input v-model="temp.customer" />
+        <el-form-item label="Müşteri" prop="customerId">
+          <el-select v-model="temp.customerId" style="width: 140px" class="filter-item" >
+            <el-option v-for="item in customer" :key="item.id" :label="item.value" :value="item.id" />
+          </el-select>
         </el-form-item>
+
         <el-form-item label="Tarih" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item>
@@ -85,8 +88,6 @@
     </el-dialog>
 
 
-
-
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
         <el-table-column prop="key" label="Channel" />
@@ -100,7 +101,7 @@
 </template>
 
 <script>
-import { fetchPv,fetchInvoiceList, fetchInvoiceSearchList ,createInvoice, updateInvoice, deleteInvoice, exportInvoiceExcel, exportInvoiceExcelByParameters } from '@/api/article'
+import { fetchPv, fetchCustomerList, fetchInvoiceList, fetchInvoiceSearchList ,createInvoice, updateInvoice, deleteInvoice, exportInvoiceExcel, exportInvoiceExcelByParameters } from '@/api/article'
 import {get} from "@/api/inline-edit";
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -146,19 +147,30 @@ export default {
         surname: undefined,
         sort: '-date'
       },
+      articleList: [
+        { title: '基础篇', href: 'https://juejin.im/post/59097cd7a22b9d0065fb61d2' },
+        { title: '登录权限篇', href: 'https://juejin.im/post/591aa14f570c35006961acac' },
+        { title: '实战篇', href: 'https://juejin.im/post/593121aa0ce4630057f70d35' },
+        { title: 'vue-admin-template 篇', href: 'https://juejin.im/post/595b4d776fb9a06bbe7dba56' },
+        { title: 'v4.0 篇', href: 'https://juejin.im/post/5c92ff94f265da6128275a85' },
+        { title: '优雅的使用 icon', href: 'https://juejin.im/post/59bb864b5188257e7a427c09' }
+      ],
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
-      sortOptions: [{ label: 'Tarih Artan', key: '+date' }, { label: 'Tarih Azalan', key: '-date' }, { label: 'ID Artan', key: '+id' }, { label: 'ID Azalan', key: '-id' } ],
+      sortOptions: [{ value: 'Tarih Artan', id: '+date' }, { value: 'Tarih Azalan', id: '-date' }, { value: 'ID Artan', id: '+id' }, { value: 'ID Azalan', id: '-id' } ],
       statusOptions: ['published', 'draft', 'deleted'],
       temp: {
         id: undefined,
         importance: 1,
         remark: '',
+        customerId : '',
+        invoiceId: '',
         timestamp: new Date(),
         title: '',
         moneyType: '',
         status: 'published'
       },
+      customer: null,
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -169,7 +181,7 @@ export default {
       pvData: [],
       rules: {
         invoiceId: [{ required: true, message: 'Fatura numarası zorunludur', trigger: 'change' }],
-        customer: [{ required: true, message: 'Müşteri seçimi zorunludur', trigger: 'change' }],
+        //customer: [{ required: true, message: 'Müşteri seçimi zorunludur', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'Tarih seçimi zorunludur', trigger: 'change' }],
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
@@ -178,12 +190,12 @@ export default {
   },
   created() {
     this.getList()
+    this.getCustomerList()
   },
   methods: {
     getList() {
       this.listLoading = true
       fetchInvoiceList().then(response => {
-        console.log(response)
         this.list = response.map(v => {
             v.id = v.id
             return v
@@ -191,33 +203,25 @@ export default {
       })
       this.listLoading = false
     },
-      
-    /*
-    getList() {
+    
+    getCustomerList() {
       this.listLoading = true
-      fetchSaleList();
-      get('http://localhost:8011/sale?token=token').then(response => {
-        //this.total = 3
-        this.list = response.data.map(v => {
-          v.id = v.id
-          v.amount = v.amount
-          return v
+      fetchCustomerList().then(response => {
+        this.customer = response.map(v => {
+            v.value = v.name +  ' ' + v.surname
+            v.id = v.id
+            return v
+        })
       })
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-
-      })
-    },*/
+      this.listLoading = false
+    },
     handleFilter() {
       this.listQuery.page = 1
       this.getSearchList()
     },
     getSearchList() {
       this.listLoading = true
-      console.log(this.listQuery)
       fetchInvoiceSearchList(this.listQuery).then(response => {
-        console.log(response)
         this.list = response.map(v => {
             v.id = v.id
             return v
@@ -257,6 +261,8 @@ export default {
         timestamp: new Date(),
         title: '',
         status: 'published',
+        invoiceId: '',
+        customerId: '',
         type: ''
       }
     },
@@ -310,6 +316,7 @@ export default {
             })
           })
         }
+        this.getList()
       })
     },
     handleDelete(row, index) {

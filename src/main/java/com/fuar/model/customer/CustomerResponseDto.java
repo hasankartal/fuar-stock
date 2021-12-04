@@ -1,6 +1,7 @@
 package com.fuar.model.customer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fuar.domain.country.Country;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -24,6 +25,13 @@ public class CustomerResponseDto {
     @ApiModelProperty(notes="Customer's surname.")
     private String surname;
 
+    @ApiModelProperty(notes="Customer's country name.")
+    private String countryName;
+
+    @ApiModelProperty(notes="Customer's country id.")
+    private Long countryId;
+
 //    @ApiModelProperty(notes="Date is invoice date")
     private String address;
+
 }

@@ -4,10 +4,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,11 +17,30 @@ public class EntityBase implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
     @CreatedDate
+    @Column(name = "CREATED_DATE")
     private Date createdDate;
+
+    @Column(name = "OPERATION")
     private String operation;
+
     @LastModifiedDate
+    @Column(name = "UPDATED_DATE")
     private Date updatedDate;
+
+    @PrePersist
+    public void onPrePersist() {
+        this.setOperation("SAVE");
+        this.setCreatedDate(new Date());
+        this.setUpdatedDate(new Date());
+    }
+
+    @PreUpdate
+    public void onPreUpdate() {
+        this.setOperation("UPDATE");
+        this.setUpdatedDate(new Date());
+    }
 }

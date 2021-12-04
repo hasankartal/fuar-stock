@@ -140,8 +140,9 @@ export function fetchCustomerSearchList(data) {
     url: 'http://localhost:8011/customer/search?token=token',
     method: 'get',
     params: {
-      name: data.surname,
-    surname: data.surname
+      name: data.name,
+      surname: data.surname,
+      address: data.address
     },
     paramsSerializer: (params) => {
       return qs.stringify(params, { arrayFormat: 'repeat' })
@@ -177,9 +178,13 @@ export function deleteCustomer(data) {
 export function exportCustomerExcel(data) {
   return request({
       url: 'http://localhost:8011/customer/exportExcel?token=token',
-      method: 'post',
+      method: 'get',
+      params: {
+        name: data.name,
+        surname: data.surname,
+        address: data.address
+      },
       responseType: 'blob',
-      data
     })
 }
 
@@ -189,8 +194,9 @@ export function exportCustomerExcelByParameters(data) {
       method: 'get',
       responseType: 'blob',
       params: {
-      name: data.surname,
-      surname: data.surname
+        name: data.name != undefined ? data.name : null,
+        surname: data.surname != undefined ? data.surname : null,
+        address: data.address != undefined ? data.address : null
       },
       paramsSerializer: (params) => {
         return qs.stringify(params, { arrayFormat: 'repeat' })
@@ -293,8 +299,8 @@ export function fetchCountryList() {
       url: 'http://localhost:8011/country/search?token=token',
       method: 'get',
       params: {
-        moneyType: data.moneyType,
-        orderDate: moment(String(data.orderDate)).format('DD-MM-YYYY')
+        code: data.code,
+        name: data.name
       },
       paramsSerializer: (params) => {
         return qs.stringify(params, { arrayFormat: 'repeat' })
@@ -343,8 +349,8 @@ export function fetchCountryList() {
         method: 'get',
         responseType: 'blob',
         params: {
-          code: data.code,
-          name: data.name
+          code: data.code != undefined ? data.code : null,
+          name: data.name != undefined ? data.name : null
         },
         paramsSerializer: (params) => {
           return qs.stringify(params, { arrayFormat: 'repeat' })

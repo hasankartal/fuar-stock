@@ -23,4 +23,9 @@ public class CustomerSaveRequestDto {
     @ApiModelProperty(notes="Customer's surname.")
     private String surname;
 
+    @ApiModelProperty(notes="Customer's country.")
+    private Long countryId;
+
+    @ApiModelProperty(notes="Customer's address.")
+    private String address;
 }

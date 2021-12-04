@@ -97,6 +97,11 @@ public class CountryService {
         return countryResponseDtoList;
     }
 
+    public Country findById(Long id) {
+        Optional<Country> country = repository.findById(id);
+
+        return country.get();
+    }
     public ByteArrayResource excelCountry(String code, String name) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();

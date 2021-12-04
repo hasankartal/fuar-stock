@@ -1,17 +1,10 @@
 package com.fuar.api.invoice;
 
-import com.fuar.api.sale.SaleApi;
 import com.fuar.domain.invoice.Invoice;
-import com.fuar.domain.sale.Sale;
 import com.fuar.model.invoice.InvoiceResponseDto;
 import com.fuar.model.invoice.InvoiceSaveRequestDto;
 import com.fuar.model.invoice.InvoiceSearchRequestDto;
-import com.fuar.model.sale.SaleResponseDto;
-import com.fuar.model.sale.SaleSaveRequestDto;
-import com.fuar.model.sale.SaleSearchRequestDto;
 import com.fuar.service.invoice.InvoiceService;
-import com.fuar.service.sale.SaleService;
-import com.fuar.service.sale.es.SaleEsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

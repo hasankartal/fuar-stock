@@ -1,13 +1,15 @@
 package com.fuar.domain.country;
 
 import com.fuar.domain.EntityBase;
+import com.fuar.domain.customer.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table
@@ -17,6 +19,13 @@ import javax.persistence.Table;
 @AllArgsConstructor
 public class Country extends EntityBase {
 
+    @Column(name = "CODE")
     private String code;
+
+    @Column(name = "NAME")
     private String name;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY, mappedBy = "country")
+    private Set<Customer> customers = new HashSet<>();
+
 }

@@ -129,6 +129,7 @@ public class InvoiceService {
                 .amount(item.getAmount())
                 .moneyType(item.getMoney())
                 .orderDate(item.getOrderDate())
+             //   .customer(item.getCustomer().getName() + " " + item.getCustomer().getSurname())
                 .build();
     }
 
