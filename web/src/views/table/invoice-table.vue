@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="Müşteri Adı" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.surname" placeholder="Müşteri Soyadı" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.invoiceId" placeholder="Fatura Numarası" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.customer" placeholder="Müşteri" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Ara
       </el-button>
@@ -38,7 +38,7 @@
 
       <el-table-column label="Müşteri" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.customer }}</span>
+          <span>{{ row.customerName }}</span>
         </template>
       </el-table-column>
 
@@ -64,7 +64,7 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Fatura Id" prop="invoiceId">
+        <el-form-item label="Fatura Numarası" prop="invoiceId">
           <el-input v-model="temp.invoiceId" />
         </el-form-item>
         <el-form-item label="Müşteri" prop="customerId">
@@ -143,18 +143,10 @@ export default {
         page: 1,
         limit: 20,
         importance: undefined,
-        name: undefined,
-        surname: undefined,
+        invoiceId: undefined,
+        customer: undefined,
         sort: '-date'
       },
-      articleList: [
-        { title: '基础篇', href: 'https://juejin.im/post/59097cd7a22b9d0065fb61d2' },
-        { title: '登录权限篇', href: 'https://juejin.im/post/591aa14f570c35006961acac' },
-        { title: '实战篇', href: 'https://juejin.im/post/593121aa0ce4630057f70d35' },
-        { title: 'vue-admin-template 篇', href: 'https://juejin.im/post/595b4d776fb9a06bbe7dba56' },
-        { title: 'v4.0 篇', href: 'https://juejin.im/post/5c92ff94f265da6128275a85' },
-        { title: '优雅的使用 icon', href: 'https://juejin.im/post/59bb864b5188257e7a427c09' }
-      ],
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
       sortOptions: [{ value: 'Tarih Artan', id: '+date' }, { value: 'Tarih Azalan', id: '-date' }, { value: 'ID Artan', id: '+id' }, { value: 'ID Azalan', id: '-id' } ],
@@ -292,7 +284,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.temp.timestamp = row.orderDate
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -303,7 +295,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          //tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          console.log("Update");
           updateInvoice(tempData).then(() => {
 //            const index = this.list.findIndex(v => v.id === this.temp.id)
  //           this.list.splice(index, 1, this.temp)
@@ -338,13 +331,14 @@ export default {
     },
     handleDownload() {
       this.downloadLoading = true
-      if(this.listQuery.moneyType != '') {
-        exportInvoiceExcelByParameters(this.listQuery).then((res) => {
+        if( (this.listQuery.invoiceId != undefined && this.listQuery.invoiceId != '') 
+          || (this.listQuery.customer != undefined && this.listQuery.customer != '')  ) {
+        exportInvoiceExcel(this.listQuery).then((res) => {
           let blob = new Blob([res], {
               type: 'application/vnd.ms-excel'
           });
           if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-            window.navigator.msSaveOrOpenBlob(blob,'Sale Excel');
+            window.navigator.msSaveOrOpenBlob(blob,'Fatura Excel');
           }else{
             let url = URL.createObjectURL(blob);
             let a = document.createElement("a");
@@ -358,7 +352,7 @@ export default {
           })
 
       } else {
-        exportInvoiceExcel().then((res) => {
+        exportInvoiceExcel(this.listQuery).then((res) => {
           //  let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
           //  console.log(res)
           if (window.navigator && window.navigator.msSaveOrOpenBlob) {

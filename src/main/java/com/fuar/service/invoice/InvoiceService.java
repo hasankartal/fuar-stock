@@ -1,9 +1,16 @@
 package com.fuar.service.invoice;
 
+import com.fuar.domain.country.Country;
+import com.fuar.domain.customer.Customer;
 import com.fuar.domain.invoice.Invoice;
+import com.fuar.domain.sale.Sale;
+import com.fuar.model.customer.CustomerResponseDto;
+import com.fuar.model.customer.CustomerSearchRequestDto;
 import com.fuar.model.invoice.InvoiceResponseDto;
 import com.fuar.model.invoice.InvoiceSaveRequestDto;
+import com.fuar.model.invoice.InvoiceSearchRequestDto;
 import com.fuar.repository.invoice.InvoiceRepository;
+import com.fuar.service.customer.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -22,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,19 +39,22 @@ public class InvoiceService {
 
     @Autowired
     private InvoiceRepository invoiceRepository;
+
+    @Autowired
+    private CustomerService customerService;
+
     //private final SaleEsService saleEsService;
     //private final SequenceGeneratorService sequenceGeneratorService;
 
     @Transactional
     public Invoice saveInvoice(InvoiceSaveRequestDto request) {
-        String operationType = "CREATED";
+        Customer customer = customerService.findById(request.getCustomerId());
 
         Invoice invoice = Invoice.builder()
                 //          .id(sequenceGeneratorService.generateSequence(Sale.SEQUENCE_NAME))
-                .amount(request.getAmount())
-                .money(request.getMoneyType())
+                .invoiceId(request.getInvoiceId())
+                .customer(customer)
                 .orderDate(new Date())
-                .operation(operationType)
                 .build();
 
         Invoice savedInvoice = invoiceRepository.save(invoice);
@@ -101,6 +112,20 @@ public class InvoiceService {
         return invoiceRepository.findAll(sortByOrderDateDesc());
     }
 
+    public List<InvoiceResponseDto> fetchInvoicesByParameters(InvoiceSearchRequestDto invoiceSearchRequestDto) {
+        List<Invoice> invoiceList = findAll();
+        invoiceList = invoiceList.stream()
+//                .filter(row -> row.getInvoiceId().contains(customerSearchRequestDto.getName() != null ? customerSearchRequestDto.getName() : ""))
+                .collect(Collectors.toList());
+
+        List<InvoiceResponseDto> invoiceResponseDtoList = new ArrayList<>();
+        for (Invoice invoice : invoiceList) {
+            InvoiceResponseDto invoiceResponseDto = mapToDto(invoice);
+            invoiceResponseDtoList.add(invoiceResponseDto);
+        }
+        return invoiceResponseDtoList;
+    }
+
     public List<InvoiceResponseDto> findByMoneyType(String moneyType) {
         List<Invoice> invoiceList = invoiceRepository.findByMoney(moneyType);
         List<InvoiceResponseDto> invoiceResponseDtoList = new ArrayList<>();
@@ -124,28 +149,28 @@ public class InvoiceService {
 //        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
 //        String date = dateFormat.format(item.getOrderDate());
         // String date = item.getOrderDate().toLocaleString();
+        Float amount = 0f;
+        for(Sale sale : item.getSale()) {
+            amount += sale.getAmount();
+        }
         return InvoiceResponseDto.builder()
                 .id(item.getId())
-                .amount(item.getAmount())
+                .invoiceId(item.getInvoiceId())
+                .amount(amount)
                 .moneyType(item.getMoney())
                 .orderDate(item.getOrderDate())
-             //   .customer(item.getCustomer().getName() + " " + item.getCustomer().getSurname())
+                .customerName(item.getCustomer().getName() + " " + item.getCustomer().getSurname())
+                .customerId(item.getCustomer().getId())
                 .build();
     }
 
-    public ByteArrayResource excelInvoice(String moneyType) {
+    public ByteArrayResource excelInvoice(InvoiceSearchRequestDto invoiceSearchRequestDto) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
 
         arrangeHeader(sheet);
 
-        List<InvoiceResponseDto> invoiceResponseDtoList = null;
-
-        if (moneyType == null) {
-            invoiceResponseDtoList = fetchAllInvoices();
-        } else {
-            invoiceResponseDtoList = findByMoneyType(moneyType);
-        }
+        List<InvoiceResponseDto> invoiceResponseDtoList = fetchInvoicesByParameters(invoiceSearchRequestDto);
 
         int numberOfRow = 1;
         for (InvoiceResponseDto invoiceResponseDto : invoiceResponseDtoList) {
@@ -171,12 +196,16 @@ public class InvoiceService {
         id.setCellValue("Id");
         headerCellNumber++;
 
-        Cell amount = header.createCell(headerCellNumber);
-        amount.setCellValue("Tutar");
+        Cell invoiceId = header.createCell(headerCellNumber);
+        invoiceId.setCellValue("Fatura Numarası");
         headerCellNumber++;
 
-        Cell currencyType = header.createCell(headerCellNumber);
-        currencyType.setCellValue("Para Birimi");
+        Cell customer = header.createCell(headerCellNumber);
+        customer.setCellValue("Müşteri");
+        headerCellNumber++;
+
+        Cell customerId = header.createCell(headerCellNumber);
+        customerId.setCellValue("Müşteri Id");
         headerCellNumber++;
 
         Cell date = header.createCell(headerCellNumber);
@@ -193,12 +222,16 @@ public class InvoiceService {
         idCell.setCellValue(invoiceResponseDto.getId());
         numberOfColumn++;
 
-        Cell amountCell = row.createCell(numberOfColumn);
-        amountCell.setCellValue(invoiceResponseDto.getAmount() != null ? invoiceResponseDto.getAmount().toString() : "");
+        Cell invoiceIdCell = row.createCell(numberOfColumn);
+        invoiceIdCell.setCellValue(invoiceResponseDto.getInvoiceId() != null ? invoiceResponseDto.getInvoiceId().toString() : "");
         numberOfColumn++;
 
-        Cell moneyTypeCell = row.createCell(numberOfColumn);
-        moneyTypeCell.setCellValue(invoiceResponseDto.getMoneyType());
+        Cell customerCell = row.createCell(numberOfColumn);
+        customerCell.setCellValue(invoiceResponseDto.getCustomerName());
+        numberOfColumn++;
+
+        Cell customerIdCell = row.createCell(numberOfColumn);
+        customerIdCell.setCellValue(invoiceResponseDto.getCustomerId());
         numberOfColumn++;
 
         Cell orderDateCell = row.createCell(numberOfColumn);

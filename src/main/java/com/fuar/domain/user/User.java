@@ -10,8 +10,9 @@ import java.util.Date;
 
 //@Document(collection = "user")
 @Entity
-@Table
-@Data
+@Table(name = "userr")
+@Getter
+@Setter
 @NoArgsConstructor
 public class User extends EntityBase {
 

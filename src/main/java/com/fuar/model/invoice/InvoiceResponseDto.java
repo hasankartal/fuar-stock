@@ -17,6 +17,9 @@ public class InvoiceResponseDto {
     @ApiModelProperty(notes="Id is unique invoice property.")
     private Long id;
 
+    @ApiModelProperty(notes="Id is unique invoice id property.")
+    private Long invoiceId;
+
     @ApiModelProperty(notes="Amount is invoice fee.")
     private Float amount;
 
@@ -30,5 +33,9 @@ public class InvoiceResponseDto {
 
     @NotNull
     @ApiModelProperty(notes="Customer who buys product.")
-    private String customer;
+    private String customerName;
+
+    @NotNull
+    @ApiModelProperty(notes="Customer id who buys product.")
+    private Long customerId;
 }

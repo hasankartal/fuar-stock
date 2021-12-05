@@ -2,17 +2,18 @@ package com.fuar.domain.sale;
 
 import com.fuar.domain.EntityBase;
 import com.fuar.domain.customer.Customer;
+import com.fuar.domain.invoice.Invoice;
 import lombok.*;
 import org.springframework.data.annotation.Transient;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 //@Document(collection = "sale")
 @Entity
 @Table
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Sale extends EntityBase {
 
@@ -22,6 +23,10 @@ public class Sale extends EntityBase {
     private Float amount;
     private String money;
     private Date orderDate;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "INVOICE_ID", referencedColumnName = "ID")
+    private Invoice invoice;
 
     @Builder
     public Sale(long id, Float amount, String money, Date orderDate, String operation) {

@@ -104,6 +104,11 @@ public class CustomerService {
         return customerResponseDtoList;
     }
 
+    public Customer findById(Long id) {
+        Optional<Customer> customer = repository.findById(id);
+
+        return customer.get();
+    }
     private CustomerResponseDto mapToDto(Customer item) {
         if (item == null) {
             return null;

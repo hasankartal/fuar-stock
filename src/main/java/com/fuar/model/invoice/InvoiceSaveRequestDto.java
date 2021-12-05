@@ -16,11 +16,16 @@ public class InvoiceSaveRequestDto {
     @ApiModelProperty(notes="Id is unique invoice property.")
     private Long id;
 
+    @ApiModelProperty(notes="Id is unique invoice property.")
+    private Long invoiceId;
+
     @NotNull
     @ApiModelProperty(notes="Amount is invoice fee.")
     private Float amount;
 
-    @NotNull
+    @ApiModelProperty(notes="Customer's id.")
+    private Long customerId;
+
     @ApiModelProperty(notes="Money type is currency type which belongs to invoice.")
     private String moneyType;
 

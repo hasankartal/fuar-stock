@@ -37,7 +37,7 @@ public class InvoiceApi {
     @GetMapping("/search")
     @ApiOperation(value = "Retrieve invoices by parameters")
     public List<InvoiceResponseDto> fetchInvoicesByParameters(@Valid InvoiceSearchRequestDto invoiceSearchRequestDto) {
-        return invoiceService.findByMoneyType(invoiceSearchRequestDto.getMoneyType());
+        return invoiceService.fetchInvoicesByParameters(invoiceSearchRequestDto);
     }
 
     @PostMapping("/add")
@@ -66,8 +66,8 @@ public class InvoiceApi {
     @PostMapping("/exportExcel")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Export invoice excel")
-    public Object excelInvoice() {
-        ByteArrayResource resource = invoiceService.excelInvoice(null);
+    public Object excelInvoice(@Valid InvoiceSearchRequestDto invoiceSearchRequestDto) {
+        ByteArrayResource resource = invoiceService.excelInvoice(invoiceSearchRequestDto);
 
         return ResponseEntity
                 .ok()
@@ -76,27 +76,4 @@ public class InvoiceApi {
         //return resource;
     }
 
-    @GetMapping("/exportExcelByParameters")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Export invoice excel with parameter")
-    public Object excelInvoiceByParameters(@RequestParam String moneyType) {
-        ByteArrayResource resource = invoiceService.excelInvoice(moneyType);
-
-        return ResponseEntity
-                .ok()
-                .contentType(new MediaType("application", "vnd.ms-excel"))
-                .body(resource);
-    }
-
-    @GetMapping("/exportInvoices")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Export invoices excel")
-    public Object excelInvoices() {
-        ByteArrayResource resource = invoiceService.excelInvoice(null);
-
-        return ResponseEntity
-                .ok()
-                .contentType(new MediaType("application", "vnd.ms-excel"))
-                .body(resource);
-    }
 }

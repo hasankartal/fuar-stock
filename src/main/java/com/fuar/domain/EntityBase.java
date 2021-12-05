@@ -16,7 +16,11 @@ import java.util.Date;
 public class EntityBase implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name="webuser_idwebuser_seq",
+            sequenceName="webuser_idwebuser_seq",
+            allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator="webuser_idwebuser_seq")
     @Column(name = "ID")
     private Long id;
 
