@@ -13,7 +13,8 @@ import java.util.Date;
 //@Document(collection = "logtable")
 @Entity
 @Table
-@Data
+@Getter
+@Setter
 public class LogRestIncoming extends EntityBase {
 
     private String endpointUrl;

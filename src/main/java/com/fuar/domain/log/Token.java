@@ -9,7 +9,8 @@ import javax.persistence.Table;
 //@Document(collection = "token")
 @Entity
 @Table
-@Data
+@Getter
+@Setter
 public class Token extends EntityBase {
 
     private Boolean isActive;

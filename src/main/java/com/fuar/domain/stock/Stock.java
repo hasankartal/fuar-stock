@@ -11,7 +11,8 @@ import java.util.Date;
 //@Document(collection = "stock")
 @Entity
 @Table
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Stock extends EntityBase {
     private String stock;

@@ -2,15 +2,19 @@ package com.fuar.domain.customer;
 
 import com.fuar.domain.EntityBase;
 import com.fuar.domain.country.Country;
+import com.fuar.domain.invoice.Invoice;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 //@Document(collection = "customer")
 @Entity
 @Table
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +30,10 @@ public class Customer extends EntityBase {
     private String address;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ID", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "COUNTRY_ID", referencedColumnName = "ID")
     private Country country;
+
+  //  @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY, mappedBy = "customer")
+  //  private Set<Invoice> invoice = new HashSet<>();
 
 }
