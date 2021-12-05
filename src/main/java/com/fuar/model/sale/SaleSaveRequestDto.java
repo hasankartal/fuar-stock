@@ -15,6 +15,9 @@ public class SaleSaveRequestDto {
     @ApiModelProperty(notes="Id is unique sale property.")
     private Long id;
 
+    @ApiModelProperty(notes="Id is unique invoice property.")
+    private Long invoiceId;
+
     @NotNull
     @ApiModelProperty(notes="Amount is invoice fee.")
     private Float amount;

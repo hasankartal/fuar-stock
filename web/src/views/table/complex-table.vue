@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Müşteri" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.importance" placeholder="Müşteri" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select>
@@ -39,6 +38,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column label="Fatura No" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.invoiceValue }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column label="Tutar" width="110px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.amount }}</span>
@@ -73,17 +78,27 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+        
+        <el-form-item label="Fatura No" prop="invoiceId">
+          <el-select v-model="temp.invoiceId" style="width: 140px" class="filter-item" >
+            <el-option v-for="item in invoice" :key="item.id" :label="item.value" :value="item.id" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="Tutar" prop="amount">
+          <el-input v-model="temp.amount" />
+        </el-form-item>
+
         <el-form-item label="Para Birimi" prop="moneyType">
           <el-select v-model="temp.moneyType" class="filter-item" placeholder="Please select">
             <el-option v-for="item in moneyTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
+
         <el-form-item label="Date" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item>
-        <el-form-item label="Tutar" prop="amount">
-          <el-input v-model="temp.amount" />
-        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -94,8 +109,6 @@
         </el-button>
       </div>
     </el-dialog>
-
-
 
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
@@ -111,7 +124,7 @@
 </template>
 
 <script>
-import { fetchPv,fetchSaleList, fetchSaleSearchList ,createSale, updateSale, deleteSale, exportSaleExcel, exportSaleExcelByParameters } from '@/api/article'
+import { fetchPv, fetchInvoiceList, fetchSaleList, fetchSaleSearchList ,createSale, updateSale, deleteSale, exportSaleExcel, exportSaleExcelByParameters } from '@/api/article'
 import {get} from "@/api/inline-edit";
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -201,6 +214,7 @@ export default {
   },
   created() {
     this.getList()
+    this.getInvoiceList()
   },
   methods: {
     getList() {
@@ -214,24 +228,19 @@ export default {
       })
       this.listLoading = false
     },
-      
-    /*
-    getList() {
+    
+    getInvoiceList() {
       this.listLoading = true
-      fetchSaleList();
-      get('http://localhost:8011/sale?token=token').then(response => {
-        //this.total = 3
-        this.list = response.data.map(v => {
-          v.id = v.id
-          v.amount = v.amount
-          return v
+      fetchInvoiceList().then(response => {
+        this.invoice = response.map(v => {
+            v.value = v.invoiceId
+            v.id = v.id
+            return v
+        })
       })
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+      this.listLoading = false
+    },
 
-      })
-    },*/
     handleFilter() {
       this.listQuery.page = 1
       this.getSearchList()

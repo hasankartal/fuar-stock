@@ -26,6 +26,7 @@ public class InvoiceSaveRequestDto {
     @ApiModelProperty(notes="Customer's id.")
     private Long customerId;
 
+    @NotNull
     @ApiModelProperty(notes="Money type is currency type which belongs to invoice.")
     private String moneyType;
 

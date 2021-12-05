@@ -1,10 +1,13 @@
 package com.fuar.service.sale;
 
+import com.fuar.domain.country.Country;
+import com.fuar.domain.invoice.Invoice;
 import com.fuar.domain.sale.Sale;
 import com.fuar.domain.sale.es.SaleEs;
 import com.fuar.model.sale.SaleResponseDto;
 import com.fuar.model.sale.SaleSaveRequestDto;
 import com.fuar.repository.sale.SaleRepository;
+import com.fuar.service.invoice.InvoiceService;
 import com.fuar.service.sequence.SequenceGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -34,17 +37,18 @@ public class SaleService {
     private SaleRepository saleRepository;
     //private final SaleEsService saleEsService;
     //private final SequenceGeneratorService sequenceGeneratorService;
+    @Autowired
+    private InvoiceService invoiceService;
 
     @Transactional
     public Sale saveSale(SaleSaveRequestDto request) {
-        String operationType = "CREATED";
+        Invoice invoice = invoiceService.findById(request.getInvoiceId());
 
         Sale sale = Sale.builder()
-      //          .id(sequenceGeneratorService.generateSequence(Sale.SEQUENCE_NAME))
                 .amount(request.getAmount())
                 .money(request.getMoneyType())
                 .orderDate(new Date())
-                .operation(operationType)
+                .invoice(invoice)
                 .build();
 
         Sale savedSale = saleRepository.save(sale);
@@ -130,6 +134,8 @@ public class SaleService {
                 .amount(item.getAmount())
                 .moneyType(item.getMoney())
                 .orderDate(item.getOrderDate())
+                .invoiceValue(item.getInvoice().getInvoiceId())
+                .invoiceId(item.getInvoice().getId())
                 .build();
     }
 

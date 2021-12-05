@@ -32,4 +32,12 @@ public class SaleResponseDto {
     @NotNull
     @ApiModelProperty(notes="Customer who buys product.")
     private String customer;
+
+    @NotNull
+    @ApiModelProperty(notes="Invoice value.")
+    private Long invoiceValue;
+
+    @NotNull
+    @ApiModelProperty(notes="Invoice id.")
+    private Long invoiceId;
 }

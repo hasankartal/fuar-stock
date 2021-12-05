@@ -1,7 +1,6 @@
 package com.fuar.domain.sale;
 
 import com.fuar.domain.EntityBase;
-import com.fuar.domain.customer.Customer;
 import com.fuar.domain.invoice.Invoice;
 import lombok.*;
 import org.springframework.data.annotation.Transient;
@@ -29,10 +28,11 @@ public class Sale extends EntityBase {
     private Invoice invoice;
 
     @Builder
-    public Sale(long id, Float amount, String money, Date orderDate, String operation) {
+    public Sale(long id, Float amount, String money, Invoice invoice, Date orderDate, String operation) {
         super(id, new Date(), operation, new Date());
         this.amount = amount;
         this.money = money;
+        this.invoice = invoice;
         this.orderDate = orderDate;
     }
 }

@@ -112,6 +112,12 @@ public class InvoiceService {
         return invoiceRepository.findAll(sortByOrderDateDesc());
     }
 
+    public Invoice findById(Long id) {
+        Optional<Invoice> invoice = invoiceRepository.findById(id);
+
+        return invoice.get();
+    }
+
     public List<InvoiceResponseDto> fetchInvoicesByParameters(InvoiceSearchRequestDto invoiceSearchRequestDto) {
         List<Invoice> invoiceList = findAll();
         invoiceList = invoiceList.stream()
