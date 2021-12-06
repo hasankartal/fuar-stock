@@ -49,6 +49,12 @@ const tableRouter = {
       meta: { title: 'Fatura Tablosu' }
     },
     {
+      path: 'order-table',
+      component: () => import('@/views/table/order-table'),
+      name: 'InvoiceTable',
+      meta: { title: 'Sipariş Tablosu' }
+    },
+    {
       path: 'country-table',
       component: () => import('@/views/table/country-table'),
       name: 'CountryTable',

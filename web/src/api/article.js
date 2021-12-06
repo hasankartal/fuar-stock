@@ -357,3 +357,86 @@ export function fetchCountryList() {
         }
       })
   }
+
+
+  export function fetchOrderList() {
+    /* get('http://localhost:8011/sale?token=token').then(response => {
+        //this.total = 3
+        this.list = response.data.map(v => {
+        v.id = v.id
+        v.amount = v.amount
+        return v
+      })
+      setTimeout(() => {
+        this.listLoading = false
+        }, 1.5 * 1000)
+      }) */
+      return request({
+        url: 'http://localhost:8011/order?token=token',
+        method: 'get'
+      })
+    }
+    
+    export function fetchOrderSearchList(data) {
+      return request({
+        url: 'http://localhost:8011/order/search?token=token',
+        method: 'get',
+        params: {
+          moneyType: data.moneyType,
+          orderDate: moment(String(data.orderDate)).format('DD-MM-YYYY')
+        },
+        paramsSerializer: (params) => {
+          return qs.stringify(params, { arrayFormat: 'repeat' })
+        },
+      })
+    
+    }
+    
+    export function createOrder(data) {
+      return request({
+        url: 'http://localhost:8011/order/add?token=token',
+        method: 'post',
+        data
+      })
+    }
+    
+    export function updateOrder(data) {
+      request({
+        url: 'http://localhost:8011/order/update?token=token',
+        method: 'post',
+        data
+      })
+    }
+    
+    export function deleteOrder(data) {
+    //  axios.delete('https://my-json-server.typicode.com/json/posts/' + id);
+      request({
+        url: 'http://localhost:8011/order/delete?token=token',
+        method: 'delete',
+        data
+      })
+    }
+    
+    export function exportOrderExcel(data) {
+      return request({
+          url: 'http://localhost:8011/order/exportExcel?token=token',
+          method: 'post',
+          responseType: 'blob',
+          data
+        })
+    }
+    
+    export function exportOrderExcelByParameters(data) {
+      return request({
+          url: 'http://localhost:8011/order/exportExcelByParameters?token=token',
+          method: 'get',
+          responseType: 'blob',
+          params: {
+            moneyType: data.moneyType
+          },
+          paramsSerializer: (params) => {
+            return qs.stringify(params, { arrayFormat: 'repeat' })
+          }
+        })
+    }
+  

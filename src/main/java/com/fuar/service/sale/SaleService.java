@@ -1,14 +1,11 @@
 package com.fuar.service.sale;
 
-import com.fuar.domain.country.Country;
 import com.fuar.domain.invoice.Invoice;
 import com.fuar.domain.sale.Sale;
-import com.fuar.domain.sale.es.SaleEs;
 import com.fuar.model.sale.SaleResponseDto;
 import com.fuar.model.sale.SaleSaveRequestDto;
 import com.fuar.repository.sale.SaleRepository;
 import com.fuar.service.invoice.InvoiceService;
-import com.fuar.service.sequence.SequenceGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -104,6 +101,12 @@ public class SaleService {
 
     public List<Sale> findAll() {
         return saleRepository.findAll(sortByOrderDateDesc());
+    }
+
+    public Sale findById(Long id) {
+        Optional<Sale> sale = saleRepository.findById(id);
+
+        return sale.get();
     }
 
     public List<SaleResponseDto> findByMoneyType(String moneyType) {

@@ -26,7 +26,7 @@ public class Invoice extends EntityBase {
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
     private Customer customer;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY, mappedBy = "invoice")
+    @OneToMany(cascade = CascadeType.PERSIST,fetch = FetchType.LAZY, mappedBy = "invoice")
     private Set<Sale> sale = new HashSet<>();
 
     @Builder
