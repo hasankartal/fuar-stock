@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Builder
 @Data
@@ -19,9 +20,16 @@ public class OrderSaveRequestDto {
     @ApiModelProperty(notes="Amount is order fee.")
     private Float amount;
 
+    @NotNull
+    @ApiModelProperty(notes="Money type is currency type which belongs to invoice.")
+    private String moneyType;
+
     @ApiModelProperty(notes="Id is unique sale property.")
     private Long saleId;
 
     @ApiModelProperty(notes="Customer's id.")
     private Long customerId;
+
+    @ApiModelProperty(notes="Date is invoice date")
+    private Date orderDate;
 }

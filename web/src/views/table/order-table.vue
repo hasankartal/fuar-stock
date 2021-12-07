@@ -1,16 +1,16 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-select v-model="listQuery.importance" placeholder="Müşteri" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-      </el-select>
+      <el-input v-model="listQuery.customer" placeholder="Müşteri" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.saleId" placeholder="Satış Id" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.moneyType" placeholder="Para Birimi" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in moneyTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
       </el-select>
+      <el-date-picker v-model="listQuery.orderDate" type="datetime" :inline="true" format= "dd-MM-yyyy" placeholder="Please pick a date" />
+      
       <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
-      <el-date-picker v-model="listQuery.orderDate" type="datetime" :inline="true" format= "dd-MM-yyyy" placeholder="Please pick a date" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Ara
       </el-button>
@@ -193,6 +193,8 @@ export default {
         importance: undefined,
         title: undefined,
         moneyType: undefined,
+        customer: undefined,
+        saleId: undefined,
         sort: '-date'
       },
       importanceOptions: [1, 2, 3],
@@ -389,62 +391,43 @@ export default {
     },
     handleDownload() {
       this.downloadLoading = true
-      if(this.listQuery.moneyType != '') {
-        exportOrderExcelByParameters(this.listQuery).then((res) => {
+    
+      exportOrderExcel(this.listQuery).then((res) => {
+        //  let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
+        //  console.log(res)
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(blob,'Order Excel');
+        }else{
+          /*
+          const link = document.createElement('a')
+          link.style.display = 'none'
+          link.href = URL.createObjectURL(blob)
+          link.download ='Sale Excel' //downloaded file name
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          console.log(res)
+          */
+        
           let blob = new Blob([res], {
-              type: 'application/vnd.ms-excel'
-          });
-          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-            window.navigator.msSaveOrOpenBlob(blob,'Order Excel');
-          }else{
-            let url = URL.createObjectURL(blob);
-            let a = document.createElement("a");
-            a.href = url;
-            a.download = "Export";
-            a.click();            
-            window.URL.revokeObjectURL(url);
-          }
-          }).catch(error => {
-              console.log(error)
-          })
-
-      } else {
-        exportOrderExcel().then((res) => {
-          //  let blob = new Blob([res.data], {type: 'application/vnd.ms-excel'})
-          //  console.log(res)
-          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-            window.navigator.msSaveOrOpenBlob(blob,'Order Excel');
-          }else{
-            /*
-            const link = document.createElement('a')
-            link.style.display = 'none'
-            link.href = URL.createObjectURL(blob)
-            link.download ='Sale Excel' //downloaded file name
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
-            console.log(res)
-            */
+            type: 'application/vnd.ms-excel'
+          }); // 2. Get the blob setting file type in the response object returned by the request. Here is excel as an example.
           
-            let blob = new Blob([res], {
-              type: 'application/vnd.ms-excel'
-            }); // 2. Get the blob setting file type in the response object returned by the request. Here is excel as an example.
-            
-            let url = URL.createObjectURL(blob); // 3. Create a temporary url pointing to the blob object
-            
-            // 4. After creating the url, you can simulate a series of operations on this file object, for example: preview, download
-            let a = document.createElement("a");
-            a.href = url;
-            //a.href = "http://localhost:8011/sale/excelSales?token=token";
-            a.download = "Export";
-            a.click();
-            // 5. Release this temporary object url
-            window.URL.revokeObjectURL(url);
-          }
-          }).catch(error => {
-              console.log(error)
-          })
-      }
+          let url = URL.createObjectURL(blob); // 3. Create a temporary url pointing to the blob object
+          
+          // 4. After creating the url, you can simulate a series of operations on this file object, for example: preview, download
+          let a = document.createElement("a");
+          a.href = url;
+          //a.href = "http://localhost:8011/sale/excelSales?token=token";
+          a.download = "Export";
+          a.click();
+          // 5. Release this temporary object url
+          window.URL.revokeObjectURL(url);
+        }
+        }).catch(error => {
+            console.log(error)
+        })
+
       this.downloadLoading = false
       /*this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {

@@ -383,7 +383,9 @@ export function fetchCountryList() {
         method: 'get',
         params: {
           moneyType: data.moneyType,
-          orderDate: moment(String(data.orderDate)).format('DD-MM-YYYY')
+          customer : data.customer,
+          saleId : data.saleId,
+        //  orderDate: moment(String(data.orderDate)).format('DD-MM-YYYY')
         },
         paramsSerializer: (params) => {
           return qs.stringify(params, { arrayFormat: 'repeat' })
@@ -426,17 +428,4 @@ export function fetchCountryList() {
         })
     }
     
-    export function exportOrderExcelByParameters(data) {
-      return request({
-          url: 'http://localhost:8011/order/exportExcelByParameters?token=token',
-          method: 'get',
-          responseType: 'blob',
-          params: {
-            moneyType: data.moneyType
-          },
-          paramsSerializer: (params) => {
-            return qs.stringify(params, { arrayFormat: 'repeat' })
-          }
-        })
-    }
   
