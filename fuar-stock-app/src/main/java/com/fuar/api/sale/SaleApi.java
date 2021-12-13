@@ -4,7 +4,6 @@ import com.fuar.entity.sale.Sale;
 import com.fuar.domain.sale.SaleResponseDto;
 import com.fuar.domain.sale.SaleSaveRequestDto;
 import com.fuar.domain.sale.SaleSearchRequestDto;
-import com.fuar.service.sale.es.SaleEsService;
 import com.fuar.service.sale.SaleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +27,6 @@ import java.util.List;
 public class SaleApi {
     Logger logger = LoggerFactory.getLogger(SaleApi.class);
     private final SaleService saleService;
-    private final SaleEsService saleEsService;
 
     @GetMapping
     @ApiOperation(value = "Retrieve all sales")
@@ -95,11 +93,7 @@ public class SaleApi {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Export sale excel")
     public Object excelSales() {
-        ByteArrayResource resource = saleEsService.excelSale(null);
 
-        return ResponseEntity
-                .ok()
-                .contentType(new MediaType("application", "vnd.ms-excel"))
-                .body(resource);
+        return null;
     }
 }
