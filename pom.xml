@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -9,22 +10,31 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.fuar</groupId>
 	<artifactId>fuar-stock</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
 	<name>fuar-stock</name>
 	<description>Fuar Ties Stock Application</description>
+	<packaging>pom</packaging>
+
+	<properties>
+		<java.version>11</java.version>
+	</properties>
 
 	<modules>
 		<module>fuar-stock-data</module>
 		<module>fuar-stock-app</module>
 	</modules>
 
-	<properties>
-		<java.version>11</java.version>
-	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.fuar</groupId>
+				<artifactId>fuar-stock-data</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>

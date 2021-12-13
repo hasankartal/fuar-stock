@@ -2,16 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>fuar-stock</artifactId>
         <groupId>com.fuar</groupId>
+        <artifactId>fuar-stock</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
     <artifactId>fuar-stock-data</artifactId>
+    <version>${project.parent.version}</version>
     <name>fuar-stock-data</name>
-    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -105,6 +106,7 @@
         </dependency>
     </dependencies>
 
+    <!--
     <build>
         <plugins>
             <plugin>
@@ -116,5 +118,5 @@
             </plugin>
         </plugins>
     </build>
-
+    -->
 </project>
