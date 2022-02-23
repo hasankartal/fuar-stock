@@ -59,6 +59,13 @@ public class OrderApi {
         return null;
     }
 
+    @DeleteMapping("/delete")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Delete order")
+    public void deleteOrder(@RequestBody OrderSaveRequestDto item) {
+        orderService.delete(item.getId());
+    }
+
     @PostMapping("/exportExcel")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Export order excel")

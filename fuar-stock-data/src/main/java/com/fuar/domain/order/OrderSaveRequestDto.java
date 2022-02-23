@@ -24,9 +24,6 @@ public class OrderSaveRequestDto {
     @ApiModelProperty(notes="Money type is currency type which belongs to invoice.")
     private String moneyType;
 
-    @ApiModelProperty(notes="Id is unique sale property.")
-    private Long saleId;
-
     @ApiModelProperty(notes="Customer's id.")
     private Long customerId;
 

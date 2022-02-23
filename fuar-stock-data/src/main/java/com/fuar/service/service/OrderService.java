@@ -1,5 +1,6 @@
 package com.fuar.service.service;
 
+import com.fuar.domain.payment.PaymentProjectionResponseDto;
 import com.fuar.entity.customer.Customer;
 import com.fuar.entity.order.Order;
 import com.fuar.entity.sale.Sale;
@@ -28,6 +29,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,7 +73,6 @@ public class OrderService {
                 .id(item.getId())
                 .customerName(item.getCustomer().getName() + " " + item.getCustomer().getSurname())
                 .customerId(item.getCustomer().getId())
-                .saleId(item.getSale().getId())
                 .amount(item.getAmount())
                 .moneyType(item.getMoneyType())
                 .build();
@@ -91,17 +92,21 @@ public class OrderService {
         return orderResponseDtoList;
     }
 
+    public List<PaymentProjectionResponseDto> sumAmountByCustomer() {
+        List<PaymentProjectionResponseDto> paymentList = orderRepository.sumAmountByCustomer();
+
+        return paymentList;
+    }
+
     @Transactional
     public Order saveOrder(OrderSaveRequestDto request) {
         Customer customer = customerService.findById(request.getCustomerId());
-        Sale sale = saleService.findById(request.getSaleId());
 
         Order order = Order.builder()
                 .amount(request.getAmount())
                 .moneyType(request.getMoneyType())
                 .orderDate(request.getOrderDate())
                 .customer(customer)
-                .sale(sale)
                 .build();
 
         Order savedOrder = orderRepository.save(order);
@@ -111,18 +116,23 @@ public class OrderService {
     @Transactional
     public Order updateOrder(OrderSaveRequestDto request) {
         Customer customer = customerService.findById(request.getCustomerId());
-        Sale sale = saleService.findById(request.getSaleId());
 
         Order order = orderRepository.findById(request.getId()).orElse(null);
         order.setId(request.getId());
         order.setAmount(request.getAmount());
         order.setMoneyType(request.getMoneyType());
         order.setCustomer(customer);
-        order.setSale(sale);
         order.setOrderDate(request.getOrderDate());
 
         Order updatedOrder = orderRepository.save(order);
         return updatedOrder;
+    }
+
+    public void delete(Long id) {
+        Optional<Order> order = orderRepository.findById(id);
+        if(order != null) {
+            orderRepository.deleteById(id);
+        }
     }
 
     public ByteArrayResource excelOrder(OrderSearchRequestDto orderSearchRequestDto) {

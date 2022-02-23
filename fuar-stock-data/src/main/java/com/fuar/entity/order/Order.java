@@ -26,18 +26,13 @@ public class Order extends EntityBase {
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
     private Customer customer;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "SALE_ID", referencedColumnName = "ID")
-    private Sale sale;
-
     @Builder
-    public Order(long id, Float amount, String moneyType, Customer customer, Sale sale, Date orderDate, String operation) {
+    public Order(long id, Float amount, String moneyType, Customer customer, Date orderDate, String operation) {
         super(id, new Date(), operation, new Date());
         this.amount = amount;
         this.moneyType = moneyType;
         this.orderDate = orderDate;
         this.customer = customer;
-        this.sale = sale;
     }
 
 }
