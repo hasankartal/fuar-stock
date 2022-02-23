@@ -17,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class Invoice extends EntityBase {
 
+    @Column(unique = true)
     private Long invoiceId;
     private Float amount;
     private String money;
