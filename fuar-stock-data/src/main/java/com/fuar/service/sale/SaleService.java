@@ -1,5 +1,6 @@
 package com.fuar.service.sale;
 
+import com.fuar.domain.collection.CollectionProjectionResponseDto;
 import com.fuar.entity.invoice.Invoice;
 import com.fuar.entity.sale.Sale;
 import com.fuar.domain.sale.SaleResponseDto;
@@ -216,6 +217,12 @@ public class SaleService {
         String date = dateFormat.format(saleResponseDto.getOrderDate());
         orderDateCell.setCellValue(date);
         numberOfColumn++;
+    }
+
+    public List<CollectionProjectionResponseDto> sumAmountByCustomer() {
+        List<CollectionProjectionResponseDto> collectionList = saleRepository.sumAmountByCustomer();
+
+        return collectionList;
     }
 
 }
