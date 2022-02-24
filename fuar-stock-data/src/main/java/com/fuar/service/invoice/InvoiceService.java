@@ -64,7 +64,6 @@ public class InvoiceService {
         Invoice invoice = invoiceRepository.findById(request.getId()).orElse(null);
 
         invoice.setId(request.getId());
-        invoice.setAmount(request.getAmount());
         invoice.setMoney(request.getMoneyType());
         invoice.setOrderDate(request.getOrderDate());
         invoice.setOperation("UPDATED");
@@ -77,7 +76,6 @@ public class InvoiceService {
     public InvoiceResponseDto save(InvoiceSaveRequestDto request) {
         Invoice sale = Invoice.builder()
                 //  .id(request.getId())
-                .amount(request.getAmount())
                 .money(request.getMoneyType())
                 .orderDate(request.getOrderDate())
                 .build();
