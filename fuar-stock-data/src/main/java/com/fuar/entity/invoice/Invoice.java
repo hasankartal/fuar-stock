@@ -19,7 +19,6 @@ public class Invoice extends EntityBase {
 
     @Column(unique = true)
     private Long invoiceId;
-    private Float amount;
     private String money;
     private Date orderDate;
 
@@ -31,9 +30,8 @@ public class Invoice extends EntityBase {
     private Set<Sale> sale = new HashSet<>();
 
     @Builder
-    public Invoice(long id, Float amount, String money, Customer customer, Long invoiceId, Date orderDate, String operation) {
+    public Invoice(long id, String money, Customer customer, Long invoiceId, Date orderDate, String operation) {
         super(id, new Date(), operation, new Date());
-        this.amount = amount;
         this.money = money;
         this.orderDate = orderDate;
         this.customer = customer;
